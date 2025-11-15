@@ -1,16 +1,26 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import { useComparison } from "../context/ComparisonContext";
+import ReviewList from "../components/ReviewList";
+import ReviewForm from "../components/ReviewForm";
+import SizeGuide from "../components/SizeGuide";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToComparison } = useComparison();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
 
   useEffect(() => {
     fetchProduct();
@@ -73,6 +83,50 @@ export default function ProductDetail() {
           <p className="text-4xl font-bold mb-6">${product.price}</p>
           <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">{product.description}</p>
 
+          <div className="flex gap-2 mb-8">
+            <button
+              onClick={async () => {
+                if (!user) {
+                  alert("Please login to add items to wishlist");
+                  navigate("/login");
+                  return;
+                }
+                const success = await toggleWishlist(product._id);
+                if (success) {
+                  alert(isInWishlist(product._id) ? "Removed from wishlist" : "Added to wishlist");
+                }
+              }}
+              className={`px-6 py-3 border-2 rounded-lg font-medium transition-all ${
+                isInWishlist(product._id)
+                  ? "bg-red-500 text-white border-red-500"
+                  : "bg-white dark:bg-black border-gray-300 dark:border-gray-700 hover:border-black dark:hover:border-white"
+              }`}
+            >
+              {isInWishlist(product._id) ? "❤️ In Wishlist" : "🤍 Add to Wishlist"}
+            </button>
+            <button
+              onClick={() => {
+                if (addToComparison(product)) {
+                  alert("Added to comparison!");
+                }
+              }}
+              className="px-6 py-3 border-2 border-gray-300 dark:border-gray-700 rounded-lg font-medium hover:border-black dark:hover:border-white transition-colors"
+            >
+              ⚖️ Compare
+            </button>
+          </div>
+
+          <div className="mb-4">
+            <button
+              onClick={() => setShowSizeGuide(!showSizeGuide)}
+              className="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {showSizeGuide ? "Hide" : "Show"} Size Guide
+            </button>
+          </div>
+
+          {showSizeGuide && <SizeGuide />}
+
           <div className="mb-8">
             <h3 className="text-xl font-semibold mb-4">Select Size:</h3>
             <div className="flex gap-2 flex-wrap">
@@ -132,6 +186,11 @@ export default function ProductDetail() {
             Add to Cart
           </button>
         </div>
+      </div>
+
+      <div className="mt-12">
+        <ReviewForm productId={id} onReviewSubmitted={() => window.location.reload()} />
+        <ReviewList productId={id} />
       </div>
     </div>
   );

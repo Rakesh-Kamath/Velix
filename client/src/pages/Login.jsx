@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import GoogleSignIn from "../components/GoogleSignIn";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -53,6 +54,15 @@ export default function Login() {
             Login
           </button>
         </form>
+        
+        <div className="my-6 flex items-center">
+          <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
+          <span className="px-4 text-sm text-gray-600 dark:text-gray-400">OR</span>
+          <div className="flex-1 border-t border-gray-300 dark:border-gray-700"></div>
+        </div>
+
+        <GoogleSignIn />
+
         <p className="mt-6 text-center text-gray-600 dark:text-gray-400">
           Don't have an account?{" "}
           <Link to="/register" className="font-medium hover:opacity-80 transition-opacity">

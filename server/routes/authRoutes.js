@@ -1,15 +1,28 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 import User from "../models/User.js";
-import protect from "../middleware/authMiddleware.js"; // ✅ import middleware
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+// Initialize Google OAuth client only if Client ID is provided
+let googleClient = null;
+if (process.env.GOOGLE_CLIENT_ID) {
+  googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+} else {
+  console.warn("⚠️  GOOGLE_CLIENT_ID not set. Google authentication will be disabled.");
+}
 
 // --- REGISTER ---
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: "Password is required and must be at least 6 characters" });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser)
@@ -50,6 +63,85 @@ router.post("/login", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+});
+
+// --- GOOGLE AUTHENTICATION ---
+router.post("/google", async (req, res) => {
+  try {
+    if (!googleClient) {
+      return res.status(503).json({ 
+        message: "Google authentication is not configured. Please set GOOGLE_CLIENT_ID in your .env file." 
+      });
+    }
+
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Google token is required" });
+    }
+
+    // Verify the Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Check if user exists with this Google ID
+    let user = await User.findOne({ googleId });
+
+    if (!user) {
+      // Check if user exists with this email (for users who registered with email first)
+      user = await User.findOne({ email });
+      
+      if (user) {
+        // Link Google account to existing user
+        user.googleId = googleId;
+        user.avatar = picture;
+        if (!user.name) user.name = name;
+        await user.save();
+      } else {
+        // Create new user
+        user = new User({
+          name,
+          email,
+          googleId,
+          avatar: picture,
+          password: "", // No password for Google users
+        });
+        await user.save();
+      }
+    } else {
+      // Update avatar if changed
+      if (picture && user.avatar !== picture) {
+        user.avatar = picture;
+        await user.save();
+      }
+    }
+
+    // Generate JWT token
+    const jwtToken = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      message: "Google authentication successful",
+      token: jwtToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error("Google auth error:", error);
+    res.status(500).json({ message: "Google authentication failed", error: error.message });
   }
 });
 

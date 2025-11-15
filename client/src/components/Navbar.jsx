@@ -2,10 +2,14 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
+import { useWishlist } from "../context/WishlistContext";
+import { useComparison } from "../context/ComparisonContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { getCartItemsCount } = useCart();
+  const { wishlist } = useWishlist();
+  const { comparisonProducts } = useComparison();
   const { darkMode, toggleTheme } = useTheme();
 
   return (
@@ -18,12 +22,35 @@ export default function Navbar() {
           <Link to="/" className="font-medium hover:opacity-80 transition-opacity">
             Home
           </Link>
+          <Link to="/comparison" className="font-medium hover:opacity-80 transition-opacity relative">
+            Compare
+            {comparisonProducts.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {comparisonProducts.length}
+              </span>
+            )}
+          </Link>
           {user ? (
             <>
+              <Link to="/wishlist" className="font-medium hover:opacity-80 transition-opacity relative">
+                Wishlist
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {wishlist.length}
+                  </span>
+                )}
+              </Link>
               <Link to="/cart" className="font-medium hover:opacity-80 transition-opacity">
                 Cart ({getCartItemsCount()})
               </Link>
-              <Link to="/profile" className="font-medium hover:opacity-80 transition-opacity">
+              <Link to="/profile" className="font-medium hover:opacity-80 transition-opacity flex items-center gap-2">
+                {user.avatar && (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
                 {user.name}
               </Link>
               <button

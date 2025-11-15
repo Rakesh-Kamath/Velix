@@ -5,19 +5,143 @@ import Product from "../models/Product.js";
 // @access  Public
 export const getProducts = async (req, res) => {
   try {
-    const keyword = req.query.keyword
-      ? {
-          name: {
-            $regex: req.query.keyword,
-            $options: "i",
-          },
-        }
-      : {};
+    const {
+      keyword,
+      category,
+      brand,
+      minPrice,
+      maxPrice,
+      size,
+      sort,
+      limit,
+    } = req.query;
 
-    const category = req.query.category ? { category: req.query.category } : {};
+    // Build filter object
+    const filter = {};
 
-    const products = await Product.find({ ...keyword, ...category });
-    res.json(products);
+    // Keyword search (name or description)
+    if (keyword) {
+      filter.$or = [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ];
+    }
+
+    // Category filter
+    if (category) {
+      filter.category = category;
+    }
+
+    // Brand filter
+    if (brand) {
+      filter.brand = { $regex: brand, $options: "i" };
+    }
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    // Size availability filter
+    if (size) {
+      filter["sizes.size"] = Number(size);
+      filter["sizes.stock"] = { $gt: 0 };
+    }
+
+    // Build sort object
+    let sortOption = {};
+    switch (sort) {
+      case "price-low":
+        sortOption = { price: 1 };
+        break;
+      case "price-high":
+        sortOption = { price: -1 };
+        break;
+      case "newest":
+        sortOption = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortOption = { createdAt: 1 };
+        break;
+      case "popularity":
+        sortOption = { rating: -1, numReviews: -1 };
+        break;
+      case "name-asc":
+        sortOption = { name: 1 };
+        break;
+      case "name-desc":
+        sortOption = { name: -1 };
+        break;
+      default:
+        sortOption = { createdAt: -1 };
+    }
+
+    // Execute query
+    let query = Product.find(filter).sort(sortOption);
+    if (limit) {
+      query = query.limit(Number(limit));
+    }
+
+    const products = await query;
+
+    // Filter by size availability if size is specified
+    let filteredProducts = products;
+    if (size) {
+      filteredProducts = products.filter((product) => {
+        const sizeObj = product.sizes.find(
+          (s) => s.size === Number(size) && s.stock > 0
+        );
+        return sizeObj !== undefined;
+      });
+    }
+
+    res.json(filteredProducts);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// @desc    Get search suggestions/autocomplete
+// @route   GET /api/products/search/suggestions
+// @access  Public
+export const getSearchSuggestions = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) {
+      return res.json([]);
+    }
+
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: q, $options: "i" } },
+        { brand: { $regex: q, $options: "i" } },
+      ],
+    })
+      .select("name brand")
+      .limit(10);
+
+    const suggestions = [
+      ...new Set([
+        ...products.map((p) => p.name),
+        ...products.map((p) => p.brand),
+      ]),
+    ].slice(0, 10);
+
+    res.json(suggestions);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// @desc    Get unique brands
+// @route   GET /api/products/brands
+// @access  Public
+export const getBrands = async (req, res) => {
+  try {
+    const brands = await Product.distinct("brand");
+    res.json(brands.sort());
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
