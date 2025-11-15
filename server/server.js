@@ -5,7 +5,9 @@ import cors from "cors";
 
 // --- Import Local Files ---
 import connectDB from "./config/db.js";
-import authRoutes from "./routes/authRoutes.js"; // 👈 PLACE THIS HERE
+import authRoutes from "./routes/authRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 // --- Initialize App ---
 dotenv.config();
@@ -18,7 +20,9 @@ app.use(cors());
 app.use(express.json()); // allows parsing of JSON requests
 
 // --- Mount Routes ---
-app.use("/api/auth", authRoutes); // 👈 this connects routes from authRoutes.js
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 // --- Test Route ---
 app.get("/", (req, res) => {

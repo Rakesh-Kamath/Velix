@@ -1,43 +1,65 @@
 import { useState } from "react";
-import api from "../api/axios";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     try {
-      const res = await api.post("/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
-      setMessage("✅ Login successful!");
+      await login(email, password);
+      navigate("/");
     } catch (error) {
-      setMessage(error.response?.data?.message || "❌ Login failed");
+      setError(error.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div style={{ padding: "2rem", color: "white" }}>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /><br /><br />
-        <button type="submit">Login</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black py-12 px-4 sm:px-6 lg:px-8 transition-colors">
+      <div className="max-w-md w-full bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-xl shadow-lg p-8">
+        <h2 className="text-3xl font-bold text-center mb-8">Login</h2>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+            required
+          />
+          {error && (
+            <div className="bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 px-4 py-3 rounded-lg">
+              {error}
+            </div>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-black dark:bg-white text-white dark:text-black py-3 rounded-lg font-medium hover:opacity-80 transition-opacity"
+          >
+            Login
+          </button>
+        </form>
+        <p className="mt-6 text-center text-gray-600 dark:text-gray-400">
+          Don't have an account?{" "}
+          <Link to="/register" className="font-medium hover:opacity-80 transition-opacity">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
