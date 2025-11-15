@@ -7,14 +7,6 @@ import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Initialize Google OAuth client only if Client ID is provided
-let googleClient = null;
-if (process.env.GOOGLE_CLIENT_ID) {
-  googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-} else {
-  console.warn("⚠️  GOOGLE_CLIENT_ID not set. Google authentication will be disabled.");
-}
-
 // --- REGISTER ---
 router.post("/register", async (req, res) => {
   try {
@@ -69,9 +61,11 @@ router.post("/login", async (req, res) => {
 // --- GOOGLE AUTHENTICATION ---
 router.post("/google", async (req, res) => {
   try {
-    if (!googleClient) {
-      return res.status(503).json({ 
-        message: "Google authentication is not configured. Please set GOOGLE_CLIENT_ID in your .env file." 
+    // Ensure server has GOOGLE_CLIENT_ID configured at request time
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      console.warn('Google auth attempted but GOOGLE_CLIENT_ID missing in environment');
+      return res.status(503).json({
+        message: "Google authentication is not configured. Please set GOOGLE_CLIENT_ID in your .env file.",
       });
     }
 
@@ -80,6 +74,9 @@ router.post("/google", async (req, res) => {
     if (!token) {
       return res.status(400).json({ message: "Google token is required" });
     }
+
+    // Create a client for this request (ensures any .env updates are picked up)
+    const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
     // Verify the Google token
     const ticket = await googleClient.verifyIdToken({

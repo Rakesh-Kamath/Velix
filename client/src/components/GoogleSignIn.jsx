@@ -83,7 +83,9 @@ export default function GoogleSignIn({ text = "Sign in with Google" }) {
       navigate("/");
     } catch (error) {
       console.error("Google sign-in error:", error);
-      alert("Google sign-in failed. Please try again.");
+      // Surface server error message when available for easier debugging
+      const serverMessage = error?.response?.data?.message || error?.message;
+      alert(`Google sign-in failed: ${serverMessage}`);
     }
   };
 
