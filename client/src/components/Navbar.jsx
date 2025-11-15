@@ -22,6 +22,9 @@ export default function Navbar() {
           <Link to="/" className="font-medium hover:opacity-80 transition-opacity">
             Home
           </Link>
+          <Link to="/products" className="font-medium hover:opacity-80 transition-opacity">
+            Products
+          </Link>
           <Link to="/comparison" className="font-medium hover:opacity-80 transition-opacity relative">
             Compare
             {comparisonProducts.length > 0 && (

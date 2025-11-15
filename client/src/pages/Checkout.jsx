@@ -15,7 +15,8 @@ export default function Checkout() {
     postalCode: "",
     country: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [paymentMethod, setPaymentMethod] = useState("razorpay");
+  const [loadingRazorpay, setLoadingRazorpay] = useState(false);
 
   const subtotal = getCartTotal();
   const shipping = subtotal > 0 ? 10 : 0;
@@ -36,16 +37,78 @@ export default function Checkout() {
       return;
     }
 
-    try {
-      const orderItems = cartItems.map((item) => ({
-        name: item.product.name,
-        qty: item.qty,
-        image: item.product.image,
-        price: item.product.price,
-        product: item.product._id,
-        size: item.size,
-      }));
+    const orderItems = cartItems.map((item) => ({
+      name: item.product.name,
+      qty: item.qty,
+      image: item.product.image,
+      price: item.product.price,
+      product: item.product._id,
+      size: item.size,
+    }));
 
+    // Handle Razorpay payment
+    if (paymentMethod === "razorpay") {
+      setLoadingRazorpay(true);
+      try {
+        const { data } = await api.post('/orders/razorpay/create', {
+          orderItems,
+          shippingAddress,
+          totalPrice: total,
+        });
+
+        // Load Razorpay script
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.onload = () => {
+          const options = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+            amount: data.amount,
+            currency: data.currency,
+            order_id: data.razorpayOrderId,
+            name: 'Velix Sneakers',
+            description: 'Order for sneakers',
+            image: 'https://via.placeholder.com/150',
+            handler: async (response) => {
+              try {
+                // Verify payment on backend
+                await api.post('/orders/razorpay/verify', {
+                  orderId: data.orderId,
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpaySignature: response.razorpay_signature,
+                });
+
+                clearCart();
+                navigate(`/order/${data.orderId}`);
+              } catch (error) {
+                alert('Payment verification failed: ' + error.response?.data?.message);
+              }
+            },
+            prefill: {
+              name: user?.name || '',
+              email: user?.email || '',
+              contact: '',
+            },
+            theme: {
+              color: '#000000',
+            },
+          };
+
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        };
+        document.head.appendChild(script);
+      } catch (error) {
+        alert('Checkout failed: ' + error.response?.data?.message);
+      } finally {
+        setLoadingRazorpay(false);
+      }
+      return;
+    }
+
+    // Handle other payment methods (existing code)
+    try {
       const order = {
         orderItems,
         shippingAddress,
@@ -141,6 +204,16 @@ export default function Checkout() {
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="radio"
+                  value="razorpay"
+                  checked={paymentMethod === "razorpay"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-5 h-5"
+                />
+                <span className="text-lg">Razorpay (UPI, Card, Wallet)</span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
                   value="card"
                   checked={paymentMethod === "card"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
@@ -173,9 +246,10 @@ export default function Checkout() {
 
           <button
             type="submit"
-            className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-lg text-xl font-bold hover:opacity-80 transition-opacity"
+            disabled={loadingRazorpay}
+            className="w-full bg-black dark:bg-white text-white dark:text-black py-4 rounded-lg text-xl font-bold hover:opacity-80 transition-opacity disabled:opacity-50"
           >
-            Place Order
+            {loadingRazorpay ? 'Processing...' : 'Place Order'}
           </button>
         </form>
 

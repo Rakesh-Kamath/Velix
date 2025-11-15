@@ -30,13 +30,19 @@ const orderSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: ["card", "paypal", "cash"],
+      enum: ["razorpay", "card", "upi", "paypal", "cash"],
     },
     paymentResult: {
       id: String,
       status: String,
       update_time: String,
       email_address: String,
+    },
+    razorpayDetails: {
+      orderId: String,
+      paymentId: String,
+      signature: String,
+      method: String,
     },
     taxPrice: {
       type: Number,
