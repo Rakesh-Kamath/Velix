@@ -29,13 +29,50 @@ export default function ProductDetail() {
   const fetchProduct = async () => {
     try {
       const res = await api.get(`/products/${id}`);
-      setProduct(res.data);
-      if (res.data.sizes && res.data.sizes.length > 0) {
-        const availableSize = res.data.sizes.find((s) => s.stock > 0);
+      const data = res.data;
+
+      // Normalize images: support `images` array or single `image` field
+      const images = data.images && data.images.length ? data.images : data.image ? [data.image] : [];
+
+      // Normalize sizes to array of { size: string, stock: number }
+      const normalizeSizes = (sizes, fallbackStock = data.countInStock || 0) => {
+        if (!sizes) return [];
+        return sizes
+          .map((s) => {
+            if (s == null) return null;
+            if (typeof s === 'string' || typeof s === 'number') {
+              return { size: String(s), stock: Number(fallbackStock || 0) };
+            }
+            if (s.size !== undefined) {
+              return { size: String(s.size), stock: Number(s.stock ?? fallbackStock ?? 0) };
+            }
+            // Malformed object like { '0': '8', stock: 0 }
+            const keys = Object.keys(s);
+            let sizeVal = null;
+            for (const k of keys) {
+              const v = s[k];
+              if (typeof v === 'number' || (typeof v === 'string' && /^\d+(?:\.\d+)?$/.test(v))) {
+                sizeVal = v;
+                break;
+              }
+            }
+            const stockVal = s.stock ?? s.count ?? fallbackStock;
+            return { size: sizeVal != null ? String(sizeVal) : '', stock: Number(stockVal ?? 0) };
+          })
+          .filter(Boolean);
+      };
+
+      const normSizes = normalizeSizes(data.sizes);
+      const productObj = { ...data, images, sizes: normSizes };
+      setProduct(productObj);
+
+      if (productObj.sizes && productObj.sizes.length > 0) {
+        const availableSize = productObj.sizes.find((s) => Number(s.stock) > 0);
         if (availableSize) setSelectedSize(availableSize.size);
       }
     } catch (error) {
       console.error("Error fetching product:", error);
+      setError('Failed to load product');
     } finally {
       setLoading(false);
     }
@@ -70,7 +107,7 @@ export default function ProductDetail() {
       </button>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 p-8 rounded-xl shadow-lg">
         <div className="w-full h-96 lg:h-[500px] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900">
-          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          <img src={(product.images && product.images[0]) || product.image} alt={product.name} className="w-full h-full object-cover" />
         </div>
         <div>
           <h1 className="text-4xl font-bold mb-2">{product.name}</h1>

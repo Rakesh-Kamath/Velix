@@ -97,7 +97,7 @@ export const getProducts = async (req, res) => {
       });
     }
 
-    res.json(filteredProducts);
+    res.json({ products: filteredProducts, count: filteredProducts.length });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

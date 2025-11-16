@@ -10,7 +10,7 @@ const orderItemSchema = new mongoose.Schema({
     required: true,
     ref: "Product",
   },
-  size: { type: Number, required: true },
+  size: { type: mongoose.Schema.Types.Mixed, required: true },
 });
 
 const orderSchema = new mongoose.Schema(
@@ -43,6 +43,11 @@ const orderSchema = new mongoose.Schema(
       paymentId: String,
       signature: String,
       method: String,
+    },
+    itemsPrice: {
+      type: Number,
+      required: false,
+      default: 0.0,
     },
     taxPrice: {
       type: Number,

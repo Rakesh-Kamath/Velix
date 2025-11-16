@@ -10,6 +10,7 @@ const products = [
     description: "Classic running shoes with air cushioning technology for maximum comfort.",
     price: 120,
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
+    images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"],
     brand: "Nike",
     category: "running",
     sizes: [
@@ -29,6 +30,7 @@ const products = [
     description: "Premium running shoes with responsive cushioning and energy return.",
     price: 180,
     image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500",
+    images: ["https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500"],
     brand: "Adidas",
     category: "running",
     sizes: [
@@ -48,6 +50,7 @@ const products = [
     description: "Iconic basketball sneakers with premium leather construction.",
     price: 170,
     image: "https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=500",
+    images: ["https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=500"],
     brand: "Nike",
     category: "basketball",
     sizes: [
@@ -67,6 +70,7 @@ const products = [
     description: "Timeless skateboarding shoes with classic checkerboard design.",
     price: 65,
     image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500",
+    images: ["https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500"],
     brand: "Vans",
     category: "skateboarding",
     sizes: [
@@ -86,6 +90,7 @@ const products = [
     description: "Retro-inspired lifestyle sneakers with premium materials.",
     price: 110,
     image: "https://images.unsplash.com/photo-1605030753481-bb38b08c384a?w=500",
+    images: ["https://images.unsplash.com/photo-1605030753481-bb38b08c384a?w=500"],
     brand: "New Balance",
     category: "lifestyle",
     sizes: [
@@ -105,6 +110,7 @@ const products = [
     description: "Futuristic design with advanced cushioning technology.",
     price: 100,
     image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500",
+    images: ["https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500"],
     brand: "Puma",
     category: "lifestyle",
     sizes: [
@@ -124,6 +130,7 @@ const products = [
     description: "Vintage-inspired sneakers with timeless style and comfort.",
     price: 75,
     image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500",
+    images: ["https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500"],
     brand: "Reebok",
     category: "lifestyle",
     sizes: [
@@ -143,6 +150,7 @@ const products = [
     description: "Training shoes designed for cross-training and weightlifting.",
     price: 130,
     image: "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=500",
+    images: ["https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=500"],
     brand: "Nike",
     category: "training",
     sizes: [

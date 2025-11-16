@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api/axios";
 import { useComparison } from "../context/ComparisonContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 import Footer from "../components/Footer";
 
 export default function Home() {
@@ -25,9 +26,37 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(false);
   const [newArrivalTab, setNewArrivalTab] = useState("footwear");
   const [trendingTab, setTrendingTab] = useState("men");
+  const [currentSlide, setCurrentSlide] = useState(0);
   const searchRef = useRef(null);
   const newArrivalScrollRef = useRef(null);
   const trendingScrollRef = useRef(null);
+
+  const heroSlides = [
+    {
+      title: "New Arrivals",
+      subtitle: "Latest Premium Sneakers Collection",
+      description: "Discover the newest additions to our exclusive lineup",
+      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&h=600&fit=crop",
+      cta: "Shop New Arrivals",
+      link: "#products",
+    },
+    {
+      title: "Summer Sale",
+      subtitle: "Up to 40% Off Selected Items",
+      description: "Limited time offer on premium sneakers",
+      image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1200&h=600&fit=crop",
+      cta: "Shop Sale",
+      link: "#products",
+    },
+    {
+      title: "Exclusive Drops",
+      subtitle: "Limited Edition Releases",
+      description: "Get your hands on rare and exclusive designs",
+      image: "https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=1200&h=600&fit=crop",
+      cta: "Explore Exclusives",
+      link: "#products",
+    },
+  ];
 
   useEffect(() => {
     fetchProducts();
@@ -54,6 +83,14 @@ export default function Home() {
     }
   }, [searchKeyword]);
 
+  // Auto-slide hero carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000); // Change slide every 5 seconds
+    return () => clearInterval(timer);
+  }, []);
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -67,7 +104,7 @@ export default function Home() {
       if (sort) params.sort = sort;
 
       const res = await api.get("/products", { params });
-      setProducts(res.data);
+      setProducts(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -78,7 +115,7 @@ export default function Home() {
   const fetchNewArrivals = async () => {
     try {
       const res = await api.get("/products", { params: { sort: "newest", limit: 10 } });
-      setNewArrivals(res.data);
+      setNewArrivals(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
     }
@@ -87,7 +124,7 @@ export default function Home() {
   const fetchTrending = async () => {
     try {
       const res = await api.get("/products", { params: { sort: "popularity", limit: 10 } });
-      setTrending(res.data);
+      setTrending(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching trending:", error);
     }
@@ -138,6 +175,14 @@ export default function Home() {
     }
   };
 
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
+
   const ProductCard = ({ product, showWishlist = true }) => (
     <div className="flex-shrink-0 w-64 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-200 relative group">
       <Link to={`/product/${product._id}`} className="no-underline text-inherit block">
@@ -156,6 +201,7 @@ export default function Home() {
               <button
                 onClick={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   toggleWishlist(product._id);
                 }}
                 className="text-red-500 hover:text-red-700"
@@ -177,164 +223,115 @@ export default function Home() {
           )}
         </div>
       </Link>
+      {/* Add to Cart button (stops link navigation) */}
+      <div className="p-4 pt-0">
+        {/* compute available size if sizes provided */}
+        <ProductCardAdd product={product} />
+      </div>
     </div>
   );
 
+  // Small inner component to avoid hook rules issues
+  const ProductCardAdd = ({ product }) => {
+    const { addToCart } = useCart();
+    const availableSize = product && product.sizes && product.sizes.find((s) => Number(s.stock) > 0);
+    const canAdd = (availableSize && Number(availableSize.stock) > 0) || (!product.sizes && product.countInStock > 0);
+
+    const handleAdd = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const sizeToUse = availableSize ? availableSize.size : null;
+      if (!canAdd) {
+        alert('Out of stock');
+        return;
+      }
+      addToCart(product, sizeToUse, 1);
+      alert('Added to cart!');
+    };
+
+    return (
+      <div>
+        {canAdd ? (
+          <button
+            onClick={handleAdd}
+            className="w-full py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            Add to Cart
+          </button>
+        ) : (
+          <div className="text-center text-sm text-red-500 font-medium">Out of Stock</div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
-      {/* Hero Banner */}
-      <div className="relative w-full h-[500px] bg-gradient-to-r from-black to-gray-900 text-white flex items-center justify-center mb-12">
-        <div className="text-center z-10">
-          <h1 className="text-6xl font-bold mb-4">Premium Sneakers Collection</h1>
-          <p className="text-2xl opacity-90 mb-8">Step into style with our curated selection</p>
-          <Link
-            to="#products"
-            className="px-8 py-4 bg-white text-black rounded-lg text-lg font-bold hover:opacity-90 transition-opacity inline-block"
+      {/* Hero Carousel */}
+      <div className="relative w-full h-[500px] overflow-hidden mb-12">
+        {heroSlides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentSlide ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${slide.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
-            Shop Now
-          </Link>
+            <div className="absolute inset-0 flex items-center justify-center text-white text-center px-4">
+              <div className="max-w-3xl">
+                <h1 className="text-6xl font-bold mb-4 animate-fadeIn">{slide.title}</h1>
+                <p className="text-3xl opacity-90 mb-2">{slide.subtitle}</p>
+                <p className="text-xl opacity-80 mb-8">{slide.description}</p>
+                <Link
+                  to={slide.link}
+                  className="px-8 py-4 bg-white text-black rounded-lg text-lg font-bold hover:opacity-90 transition-opacity inline-block"
+                >
+                  {slide.cta}
+                </Link>
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 backdrop-blur-sm transition-all z-10"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 backdrop-blur-sm transition-all z-10"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Slide Indicators */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {heroSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentSlide
+                  ? "bg-white w-8"
+                  : "bg-white/50 hover:bg-white/70"
+              }`}
+            />
+          ))}
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="relative mb-4" ref={searchRef}>
-            <input
-              type="text"
-              placeholder="Search sneakers..."
-              value={searchKeyword}
-              onChange={(e) => {
-                setSearchKeyword(e.target.value);
-                setShowSuggestions(true);
-              }}
-              onFocus={() => setShowSuggestions(true)}
-              className="w-full px-4 py-3 text-base border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
-            />
-            {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                {suggestions.map((suggestion, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="px-6 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-black dark:hover:border-white transition-colors"
-          >
-            {showFilters ? "Hide" : "Show"} Filters
-          </button>
-        </div>
-
-        {/* Filters */}
-        {showFilters && (
-          <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-900 rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium">Category</label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-                >
-                  <option value="">All Categories</option>
-                  <option value="running">Running</option>
-                  <option value="basketball">Basketball</option>
-                  <option value="lifestyle">Lifestyle</option>
-                  <option value="skateboarding">Skateboarding</option>
-                  <option value="training">Training</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium">Brand</label>
-                <select
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-                >
-                  <option value="">All Brands</option>
-                  {brands.map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium">Size</label>
-                <select
-                  value={size}
-                  onChange={(e) => setSize(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-                >
-                  <option value="">All Sizes</option>
-                  {[6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13].map(
-                    (s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium">Sort By</label>
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-                >
-                  <option value="newest">Newest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="popularity">Popularity</option>
-                  <option value="name-asc">Name: A-Z</option>
-                  <option value="name-desc">Name: Z-A</option>
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block mb-2 text-sm font-medium">Min Price</label>
-                <input
-                  type="number"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  placeholder="Min"
-                  min="0"
-                  className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block mb-2 text-sm font-medium">Max Price</label>
-                <input
-                  type="number"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  placeholder="Max"
-                  min="0"
-                  className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-                />
-              </div>
-            </div>
-            <button
-              onClick={clearFilters}
-              className="px-6 py-2 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-red-500 transition-colors"
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
-
         {/* New Arrivals Section */}
         <section className="mb-16">
           <div className="flex justify-between items-center mb-6">

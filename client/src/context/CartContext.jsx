@@ -22,27 +22,33 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, size, qty = 1) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) => item.product._id === product._id && item.size === size
-      );
+      const pid = product?._id || product?.id || null;
+      const existingItem = prevItems.find((item) => {
+        const itemPid = item.product && (item.product._id || item.product.id);
+        return itemPid === pid && item.size === size;
+      });
+
+      const productToStore = pid ? { ...product, _id: pid } : { ...product };
 
       if (existingItem) {
-        return prevItems.map((item) =>
-          item.product._id === product._id && item.size === size
+        return prevItems.map((item) => {
+          const itemPid = item.product && (item.product._id || item.product.id);
+          return itemPid === pid && item.size === size
             ? { ...item, qty: item.qty + qty }
-            : item
-        );
+            : item;
+        });
       } else {
-        return [...prevItems, { product, size, qty }];
+        return [...prevItems, { product: productToStore, size, qty }];
       }
     });
   };
 
   const removeFromCart = (productId, size) => {
     setCartItems((prevItems) =>
-      prevItems.filter(
-        (item) => !(item.product._id === productId && item.size === size)
-      )
+      prevItems.filter((item) => {
+        const itemPid = item.product && (item.product._id || item.product.id);
+        return !(itemPid === productId && item.size === size);
+      })
     );
   };
 
@@ -52,11 +58,10 @@ export const CartProvider = ({ children }) => {
       return;
     }
     setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.product._id === productId && item.size === size
-          ? { ...item, qty }
-          : item
-      )
+      prevItems.map((item) => {
+        const itemPid = item.product && (item.product._id || item.product.id);
+        return itemPid === productId && item.size === size ? { ...item, qty } : item;
+      })
     );
   };
 

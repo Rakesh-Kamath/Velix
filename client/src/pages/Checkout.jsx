@@ -56,10 +56,22 @@ export default function Checkout() {
           totalPrice: total,
         });
 
+        // Check if Razorpay key is configured
+        const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+        if (!razorpayKey || razorpayKey === 'your_razorpay_key_id_here') {
+          alert('Razorpay is not configured. Please set VITE_RAZORPAY_KEY_ID in .env file.');
+          setLoadingRazorpay(false);
+          return;
+        }
+
         // Load Razorpay script
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
         script.async = true;
+        script.onerror = () => {
+          alert('Failed to load Razorpay. Please check your internet connection.');
+          setLoadingRazorpay(false);
+        };
         script.onload = () => {
           const options = {
             key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -93,9 +105,19 @@ export default function Checkout() {
             theme: {
               color: '#000000',
             },
+            modal: {
+              ondismiss: () => {
+                setLoadingRazorpay(false);
+                alert('Payment cancelled');
+              },
+            },
           };
 
           const rzp = new window.Razorpay(options);
+          rzp.on('payment.failed', function (response) {
+            setLoadingRazorpay(false);
+            alert('Payment failed: ' + response.error.description);
+          });
           rzp.open();
         };
         document.head.appendChild(script);
