@@ -14,6 +14,8 @@ export const getProducts = async (req, res) => {
       size,
       sort,
       limit,
+      gender,
+      productType,
     } = req.query;
 
     // Build filter object
@@ -37,6 +39,16 @@ export const getProducts = async (req, res) => {
       filter.brand = { $regex: brand, $options: "i" };
     }
 
+    // Gender filter
+    if (gender) {
+      filter.gender = gender;
+    }
+
+    // Product Type filter (for accessories)
+    if (productType) {
+      filter.productType = productType;
+    }
+
     // Price range filter
     if (minPrice || maxPrice) {
       filter.price = {};
@@ -46,7 +58,7 @@ export const getProducts = async (req, res) => {
 
     // Size availability filter
     if (size) {
-      filter["sizes.size"] = Number(size);
+      filter["sizes.size"] = size;
       filter["sizes.stock"] = { $gt: 0 };
     }
 
@@ -91,7 +103,7 @@ export const getProducts = async (req, res) => {
     if (size) {
       filteredProducts = products.filter((product) => {
         const sizeObj = product.sizes.find(
-          (s) => s.size === Number(size) && s.stock > 0
+          (s) => String(s.size) === String(size) && s.stock > 0
         );
         return sizeObj !== undefined;
       });

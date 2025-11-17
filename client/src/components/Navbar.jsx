@@ -33,7 +33,7 @@ export default function Navbar() {
         {/* Center Navigation */}
         <div className="hidden md:flex items-center gap-10">
           <Link to="/" className="text-base font-semibold hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
-            HOME
+            NEW ARRIVAL
           </Link>
           <Link to="/products?category=footwear" className="text-base font-semibold hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
             FOOTWEAR

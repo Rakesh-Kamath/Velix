@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api/axios';
 
 const ProductCard = ({ product }) => {
@@ -18,7 +18,7 @@ const ProductCard = ({ product }) => {
         <p className="text-xs text-gray-500 dark:text-gray-400">{product.brand}</p>
         <h3 className="font-semibold text-sm md:text-base truncate">{product.name}</h3>
         <div className="flex justify-between items-center mt-3">
-          <p className="font-bold text-lg">₹{product.price}</p>
+          <p className="font-bold text-lg">${product.price}</p>
           <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">
             ⭐ {product.rating}
           </span>
@@ -32,29 +32,57 @@ const ProductCard = ({ product }) => {
 };
 
 export default function Products() {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filters, setFilters] = useState({
-    category: '',
-    brand: '',
-    keyword: '',
-  });
+  
+  const categoryParam = searchParams.get('category') || 'footwear';
+  const [category, setCategory] = useState(categoryParam);
+  
+  // Common filters
+  const [brand, setBrand] = useState('');
+  const [gender, setGender] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  
+  // Footwear specific
+  const [shoeSize, setShoeSize] = useState('');
+  
+  // Accessories specific
+  const [productType, setProductType] = useState('');
 
   useEffect(() => {
     fetchProducts();
-  }, [filters]);
+  }, [category, brand, gender, minPrice, maxPrice, sortBy, shoeSize, productType]);
+
+  useEffect(() => {
+    setCategory(categoryParam);
+    // Reset category-specific filters when category changes
+    setShoeSize('');
+    setProductType('');
+  }, [categoryParam]);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (filters.keyword) params.append('keyword', filters.keyword);
-      if (filters.brand) params.append('brand', filters.brand);
-      if (filters.category) params.append('category', filters.category);
+      if (category) params.append('category', category);
+      if (brand) params.append('brand', brand);
+      if (gender) params.append('gender', gender);
+      if (minPrice) params.append('minPrice', minPrice);
+      if (maxPrice) params.append('maxPrice', maxPrice);
+      if (sortBy) params.append('sort', sortBy);
+      
+      // Footwear specific
+      if (category === 'footwear' && shoeSize) params.append('size', shoeSize);
+      
+      // Accessories specific
+      if (category === 'accessories' && productType) params.append('productType', productType);
 
       const { data } = await api.get(`/products?${params.toString()}`);
-      setProducts(data.products);
+      setProducts(data.products || data);
       setError('');
     } catch (err) {
       setError('Failed to load products');
@@ -64,50 +92,178 @@ export default function Products() {
     }
   };
 
-  const brands = ['Heritage', 'ZoomLabs', 'SummitGear', 'UrbanMove', 'HoopsPro', 'EasyWear'];
-  const categories = ['running', 'casual', 'hiking', 'street', 'basketball'];
+  const clearFilters = () => {
+    setBrand('');
+    setGender('');
+    setMinPrice('');
+    setMaxPrice('');
+    setSortBy('');
+    setShoeSize('');
+    setProductType('');
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-4xl font-bold mb-8">Our Sneakers</h1>
+      <h1 className="text-4xl font-bold mb-8">
+        {category === 'footwear' ? 'Footwear' : 'Accessories'}
+      </h1>
+
+      {/* Category Toggle */}
+      <div className="mb-6 flex gap-4">
+        <button
+          onClick={() => setCategory('footwear')}
+          className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            category === 'footwear'
+              ? 'bg-black dark:bg-white text-white dark:text-black'
+              : 'bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700'
+          }`}
+        >
+          FOOTWEAR
+        </button>
+        <button
+          onClick={() => setCategory('accessories')}
+          className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+            category === 'accessories'
+              ? 'bg-black dark:bg-white text-white dark:text-black'
+              : 'bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700'
+          }`}
+        >
+          ACCESSORIES
+        </button>
+      </div>
 
       {/* Filters */}
       <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg p-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <input
-            type="text"
-            placeholder="Search sneakers..."
-            value={filters.keyword}
-            onChange={(e) => setFilters({ ...filters, keyword: e.target.value })}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <select
-            value={filters.brand}
-            onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Brands</option>
-            {brands.map(b => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
-          <select
-            value={filters.category}
-            onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Categories</option>
-            {categories.map(c => (
-              <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
-            ))}
-          </select>
-          <button
-            onClick={() => setFilters({ category: '', brand: '', keyword: '' })}
-            className="px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-black rounded-lg hover:bg-gray-900 dark:hover:bg-gray-300 transition"
-          >
-            Clear Filters
-          </button>
+        <h2 className="text-xl font-bold mb-4">Filters</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          
+          {/* Footwear Filters */}
+          {category === 'footwear' && (
+            <>
+              <div>
+                <label className="block mb-2 text-sm font-medium">Shoe Size</label>
+                <select
+                  value={shoeSize}
+                  onChange={(e) => setShoeSize(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Sizes</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          {/* Accessories Filters */}
+          {category === 'accessories' && (
+            <>
+              <div>
+                <label className="block mb-2 text-sm font-medium">Product Type</label>
+                <select
+                  value={productType}
+                  onChange={(e) => setProductType(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">All Types</option>
+                  <option value="socks">Socks</option>
+                  <option value="bags">Bags</option>
+                  <option value="caps">Caps</option>
+                  <option value="laces">Laces</option>
+                  <option value="insoles">Insoles</option>
+                  <option value="cleaner">Cleaning Kits</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          {/* Common Filters */}
+          <div>
+            <label className="block mb-2 text-sm font-medium">Brand</label>
+            <select
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Brands</option>
+              <option value="Nike">Nike</option>
+              <option value="Adidas">Adidas</option>
+              <option value="Puma">Puma</option>
+              <option value="New Balance">New Balance</option>
+              <option value="Vans">Vans</option>
+              <option value="Reebok">Reebok</option>
+              <option value="Crep Protect">Crep Protect</option>
+              <option value="Dr. Scholl's">Dr. Scholl's</option>
+              <option value="Lace Lab">Lace Lab</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-2 text-sm font-medium">Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All</option>
+              <option value="men">Men</option>
+              <option value="women">Women</option>
+              <option value="unisex">Unisex</option>
+              <option value="kids">Kids</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-2 text-sm font-medium">Sort By Price</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Default</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="newest">Newest</option>
+              <option value="popularity">Most Popular</option>
+            </select>
+          </div>
         </div>
+
+        {/* Price Range */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label className="block mb-2 text-sm font-medium">Min Price ($)</label>
+            <input
+              type="number"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              placeholder="0"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block mb-2 text-sm font-medium">Max Price ($)</label>
+            <input
+              type="number"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              placeholder="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={clearFilters}
+          className="mt-4 px-6 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-black rounded-lg hover:bg-gray-900 dark:hover:bg-gray-300 transition"
+        >
+          Clear All Filters
+        </button>
       </div>
 
       {/* Products Grid */}

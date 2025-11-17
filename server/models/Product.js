@@ -29,11 +29,24 @@ const productSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["running", "basketball", "lifestyle", "skateboarding", "training"],
+      enum: ["footwear", "accessories"],
+    },
+    subcategory: {
+      type: String,
+      enum: ["running", "basketball", "lifestyle", "skateboarding", "training", "socks", "bags", "caps", "laces", "insoles", "cleaner"],
+    },
+    gender: {
+      type: String,
+      enum: ["men", "women", "unisex", "kids"],
+      default: "unisex",
+    },
+    productType: {
+      type: String,
+      enum: ["socks", "bags", "caps", "laces", "insoles", "cleaner", "other"],
     },
     sizes: [
       {
-        size: { type: Number, required: true },
+        size: { type: mongoose.Schema.Types.Mixed, required: true },
         stock: { type: Number, required: true, default: 0 },
       },
     ],
