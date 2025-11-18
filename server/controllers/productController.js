@@ -16,6 +16,8 @@ export const getProducts = async (req, res) => {
       limit,
       gender,
       productType,
+      sale,
+      subcategory,
     } = req.query;
 
     // Build filter object
@@ -34,6 +36,11 @@ export const getProducts = async (req, res) => {
       filter.category = category;
     }
 
+    // Subcategory filter
+    if (subcategory) {
+      filter.subcategory = subcategory;
+    }
+
     // Brand filter
     if (brand) {
       filter.brand = { $regex: brand, $options: "i" };
@@ -47,6 +54,11 @@ export const getProducts = async (req, res) => {
     // Product Type filter (for accessories)
     if (productType) {
       filter.productType = productType;
+    }
+
+    // Sale filter
+    if (sale === 'true') {
+      filter.isOnSale = true;
     }
 
     // Price range filter

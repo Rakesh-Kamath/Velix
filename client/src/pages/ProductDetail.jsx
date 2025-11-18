@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -21,6 +22,7 @@ export default function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     fetchProduct();
@@ -80,11 +82,11 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      alert("Please select a size");
+      toast.error("Please select a size");
       return;
     }
     addToCart(product, selectedSize, qty);
-    alert("Added to cart!");
+    toast.success(`Added ${qty} item(s) to cart!`);
   };
 
   if (loading) {
@@ -95,7 +97,8 @@ export default function ProductDetail() {
     return <div className="text-center py-12 text-xl">Product not found</div>;
   }
 
-  const availableSizes = product.sizes.filter((s) => s.stock > 0);
+  const allSizes = product.sizes || [];
+  const images = product.images || [product.image];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -106,8 +109,37 @@ export default function ProductDetail() {
         ← Back
       </button>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 p-8 rounded-xl shadow-lg">
-        <div className="w-full h-96 lg:h-[500px] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900">
-          <img src={(product.images && product.images[0]) || product.image} alt={product.name} className="w-full h-full object-cover" />
+        {/* Image Gallery */}
+        <div>
+          <div className="w-full h-96 lg:h-[500px] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900 mb-4">
+            <img 
+              src={images[selectedImage]} 
+              alt={product.name} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {/* Thumbnail Images */}
+          {images.length > 1 && (
+            <div className="grid grid-cols-4 gap-2">
+              {images.map((img, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`w-full h-20 overflow-hidden rounded-lg border-2 transition-all ${
+                    selectedImage === index
+                      ? 'border-black dark:border-white'
+                      : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <img 
+                    src={img} 
+                    alt={`${product.name} ${index + 1}`} 
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div>
           <h1 className="text-4xl font-bold mb-2">{product.name}</h1>
@@ -117,20 +149,40 @@ export default function ProductDetail() {
               ⭐ {product.rating.toFixed(1)} ({product.numReviews} reviews)
             </div>
           )}
-          <p className="text-4xl font-bold mb-6">${product.price}</p>
+          <div className="mb-6">
+            <div className="flex items-center gap-4">
+              <p className="text-4xl font-bold">₹{product.isOnSale && product.salePrice ? product.salePrice.toLocaleString('en-IN') : product.price.toLocaleString('en-IN')}</p>
+              {product.isOnSale && product.salePrice && (
+                <>
+                  <p className="text-2xl text-gray-500 dark:text-gray-400 line-through">₹{product.price.toLocaleString('en-IN')}</p>
+                  <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    {Math.round(((product.price - product.salePrice) / product.price) * 100)}% OFF
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
           <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">{product.description}</p>
 
           <div className="flex gap-2 mb-8">
             <button
               onClick={async () => {
                 if (!user) {
-                  alert("Please login to add items to wishlist");
+                  toast.error("Please login to add items to wishlist");
                   navigate("/login");
                   return;
                 }
+                // Check current state BEFORE toggle
+                const wasInWishlist = isInWishlist(product._id);
                 const success = await toggleWishlist(product._id);
                 if (success) {
-                  alert(isInWishlist(product._id) ? "Removed from wishlist" : "Added to wishlist");
+                  if (wasInWishlist) {
+                    toast.success("Removed from wishlist");
+                  } else {
+                    toast.success("Added to wishlist");
+                  }
+                } else {
+                  toast.error("Failed to update wishlist. Please try again.");
                 }
               }}
               className={`px-6 py-3 border-2 rounded-lg font-medium transition-all ${
@@ -144,7 +196,9 @@ export default function ProductDetail() {
             <button
               onClick={() => {
                 if (addToComparison(product)) {
-                  alert("Added to comparison!");
+                  toast.success("Added to comparison!");
+                } else {
+                  toast.error("Comparison list is full (max 4 items)");
                 }
               }}
               className="px-6 py-3 border-2 border-gray-300 dark:border-gray-700 rounded-lg font-medium hover:border-black dark:hover:border-white transition-colors"
@@ -167,27 +221,37 @@ export default function ProductDetail() {
           <div className="mb-8">
             <h3 className="text-xl font-semibold mb-4">Select Size:</h3>
             <div className="flex gap-2 flex-wrap">
-              {availableSizes.length > 0 ? (
-                availableSizes.map((sizeObj) => (
-                  <button
-                    key={sizeObj.size}
-                    className={`px-6 py-3 border-2 rounded-lg font-medium transition-all ${
-                      selectedSize === sizeObj.size
-                        ? "bg-black dark:bg-white text-white dark:text-black border-black dark:border-white"
-                        : "bg-white dark:bg-black border-gray-300 dark:border-gray-700 hover:border-black dark:hover:border-white"
-                    }`}
-                    onClick={() => setSelectedSize(sizeObj.size)}
-                  >
-                    {sizeObj.size}
-                  </button>
-                ))
+              {allSizes.length > 0 ? (
+                allSizes.map((sizeObj) => {
+                  const isAvailable = sizeObj.stock > 0;
+                  const isSelected = selectedSize === sizeObj.size;
+                  return (
+                    <button
+                      key={sizeObj.size}
+                      onClick={() => isAvailable && setSelectedSize(sizeObj.size)}
+                      disabled={!isAvailable}
+                      className={`px-6 py-3 border-2 rounded-lg font-medium transition-all ${
+                        isSelected
+                          ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white'
+                          : isAvailable
+                          ? 'bg-white dark:bg-black border-gray-300 dark:border-gray-700 hover:border-black dark:hover:border-white'
+                          : 'bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50'
+                      }`}
+                    >
+                      {sizeObj.size}
+                      {!isAvailable && (
+                        <span className="block text-xs mt-1">Out of stock</span>
+                      )}
+                    </button>
+                  );
+                })
               ) : (
-                <p className="font-medium">Out of Stock</p>
+                <p className="font-medium">No sizes available</p>
               )}
             </div>
           </div>
 
-          {availableSizes.length > 0 && (
+          {allSizes.some(s => s.stock > 0) && (
             <div className="mb-8">
               <label className="block mb-2 font-medium">Quantity:</label>
               <div className="flex items-center gap-4">
@@ -204,7 +268,7 @@ export default function ProductDetail() {
                     setQty(
                       Math.min(
                         qty + 1,
-                        availableSizes.find((s) => s.size === selectedSize)?.stock || 1
+                        allSizes.find((s) => s.size === selectedSize)?.stock || 1
                       )
                     )
                   }
@@ -218,9 +282,9 @@ export default function ProductDetail() {
           <button
             className="w-full py-4 bg-black dark:bg-white text-white dark:text-black rounded-lg text-xl font-bold hover:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleAddToCart}
-            disabled={!selectedSize || availableSizes.length === 0}
+            disabled={!selectedSize || !allSizes.some(s => s.stock > 0)}
           >
-            Add to Cart
+            {allSizes.some(s => s.stock > 0) ? 'Add to Cart' : 'Out of Stock'}
           </button>
         </div>
       </div>

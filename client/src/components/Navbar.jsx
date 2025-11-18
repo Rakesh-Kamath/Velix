@@ -18,16 +18,11 @@ export default function Navbar() {
     <nav className="bg-white dark:bg-black border-b border-gray-300 dark:border-gray-700 py-4 shadow-lg sticky top-0 z-50 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         {/* Logo - Far Left */}
-        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity group">
-          <div className="relative">
-            {/* Stylized V Logo */}
-            <div className="w-12 h-12 bg-gradient-to-br from-black to-gray-700 dark:from-white dark:to-gray-300 rounded-lg flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform">
-              <span className="text-white dark:text-black text-2xl font-black italic">V</span>
-            </div>
-            {/* Small accent dot */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-          </div>
-          <span className="text-2xl font-black tracking-tight">VELIX</span>
+        <Link to="/" className="flex items-center hover:opacity-90 transition-opacity">
+          <span className="text-4xl font-black bg-gradient-to-r from-black via-gray-800 to-black dark:from-white dark:via-gray-300 dark:to-white bg-clip-text text-transparent tracking-tighter relative">
+            VELIX
+            <span className="absolute -top-1 -right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+          </span>
         </Link>
 
         {/* Center Navigation */}
@@ -92,6 +87,14 @@ export default function Navbar() {
                 >
                   Profile
                 </Link>
+                {user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900"
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={logout}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-b-lg"

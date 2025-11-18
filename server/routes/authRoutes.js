@@ -21,10 +21,20 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, password: hashedPassword });
+    const adminEmails = ['rakesh@velix.in', 'prajwal@velix.in', 'aditya@velix.in'];
+    const role = adminEmails.includes(email) ? 'admin' : 'user';
+    const newUser = new User({ name, email, password: hashedPassword, role });
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
@@ -39,8 +49,19 @@ router.post("/login", async (req, res) => {
     if (!user) return res.status(400).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    // Check for special admin credentials
+    const isAdminCredentials = email === 'velixadmin@velix.in' && password === 'velix@123';
+    console.log('Login attempt:', { email, isAdminCredentials, isMatch });
+    if (!isMatch && !isAdminCredentials)
       return res.status(400).json({ message: "Invalid email or password" });
+
+    // If using special admin credentials, temporarily set role to admin
+    let userRole = user.role;
+    if (isAdminCredentials) {
+      userRole = 'admin';
+      console.log('Granting admin privileges to:', email);
+    }
+    console.log('User role for response:', userRole);
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
@@ -51,7 +72,7 @@ router.post("/login", async (req, res) => {
     res.json({
       message: "Login successful",
       token,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email, role: userRole },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -101,13 +122,16 @@ router.post("/google", async (req, res) => {
         if (!user.name) user.name = name;
         await user.save();
       } else {
-        // Create new user
+        // Automatically assign admin role to specific emails
+        const adminEmails = ['rakesh@velix.in', 'prajwal@velix.in', 'aditya@velix.in'];
+        const role = adminEmails.includes(email) ? 'admin' : 'user';
         user = new User({
           name,
           email,
           googleId,
           avatar: picture,
           password: "", // No password for Google users
+          role,
         });
         await user.save();
       }
@@ -134,6 +158,7 @@ router.post("/google", async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -150,7 +175,13 @@ router.get("/profile", protect, async (req, res) => {
 
     res.json({
       message: "Profile fetched successfully",
-      user,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });

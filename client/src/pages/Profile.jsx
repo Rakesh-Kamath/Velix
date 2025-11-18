@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 
@@ -40,9 +40,20 @@ export default function Profile() {
         <p className="text-lg mb-2">
           <strong>Name:</strong> {user.name}
         </p>
-        <p className="text-lg">
+        <p className="text-lg mb-2">
           <strong>Email:</strong> {user.email}
         </p>
+        <p className="text-lg mb-2">
+          <strong>Role:</strong> {user.role}
+        </p>
+        {user.role === 'admin' && (
+          <Link 
+            to="/admin" 
+            className="mt-4 inline-block px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Admin Dashboard
+          </Link>
+        )}
       </div>
 
       <div>

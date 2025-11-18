@@ -88,21 +88,57 @@ export const verifyRazorpayPayment = async (req, res) => {
       return res.status(400).json({ message: 'Invalid payment signature' });
     }
 
-    // Update order as paid
-    const order = await Order.findByIdAndUpdate(
-      orderId,
-      {
-        isPaid: true,
-        paidAt: new Date(),
-        'razorpayDetails.paymentId': razorpayPaymentId,
-        'razorpayDetails.signature': razorpaySignature,
-      },
-      { new: true }
-    );
-
+    // Find the order
+    const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
+
+    // Check if payment was already verified to prevent duplicate stock decrements
+    if (order.isPaid) {
+      return res.json({
+        message: 'Payment already verified',
+        order,
+      });
+    }
+
+    // Decrement stock for each product in the order
+    for (const item of order.orderItems) {
+      const product = await Product.findById(item.product);
+      if (!product) {
+        return res.status(404).json({ message: `Product ${item.product} not found` });
+      }
+      
+      // Update stock for the specific size
+      const sizeIndex = product.sizes.findIndex(s => String(s.size) === String(item.size));
+      if (sizeIndex !== -1) {
+        if (product.sizes[sizeIndex].stock < item.qty) {
+          return res.status(400).json({ 
+            message: `Insufficient stock for ${product.name} size ${item.size}` 
+          });
+        }
+        product.sizes[sizeIndex].stock -= item.qty;
+        product.countInStock -= item.qty;
+        await product.save();
+      } else {
+        // If size not found but product has countInStock, decrement it
+        if (product.countInStock >= item.qty) {
+          product.countInStock -= item.qty;
+          await product.save();
+        } else {
+          return res.status(400).json({ 
+            message: `Insufficient stock for ${product.name}` 
+          });
+        }
+      }
+    }
+
+    // Update order as paid
+    order.isPaid = true;
+    order.paidAt = new Date();
+    order.razorpayDetails.paymentId = razorpayPaymentId;
+    order.razorpayDetails.signature = razorpaySignature;
+    await order.save();
 
     res.json({
       message: 'Payment verified successfully',

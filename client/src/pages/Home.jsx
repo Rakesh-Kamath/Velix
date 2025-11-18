@@ -2,13 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
 import { useComparison } from "../context/ComparisonContext";
-import { useWishlist } from "../context/WishlistContext";
-import { useCart } from "../context/CartContext";
+import ProductCard from "../components/ProductCard";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 import Footer from "../components/Footer";
 
 export default function Home() {
   const { addToComparison } = useComparison();
-  const { toggleWishlist, isInWishlist } = useWishlist();
   const [products, setProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
   const [trending, setTrending] = useState([]);
@@ -38,7 +37,7 @@ export default function Home() {
       description: "Discover the newest additions to our exclusive lineup",
       image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&h=600&fit=crop",
       cta: "Shop New Arrivals",
-      link: "#products",
+      link: "/products?category=footwear",
     },
     {
       title: "Summer Sale",
@@ -46,7 +45,7 @@ export default function Home() {
       description: "Limited time offer on premium sneakers",
       image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1200&h=600&fit=crop",
       cta: "Shop Sale",
-      link: "#products",
+      link: "/products?sale=true",
     },
     {
       title: "Exclusive Drops",
@@ -54,7 +53,7 @@ export default function Home() {
       description: "Get your hands on rare and exclusive designs",
       image: "https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=1200&h=600&fit=crop",
       cta: "Explore Exclusives",
-      link: "#products",
+      link: "/products?subcategory=lifestyle",
     },
   ];
 
@@ -64,6 +63,16 @@ export default function Home() {
     fetchNewArrivals();
     fetchTrending();
   }, [category, searchKeyword, brand, minPrice, maxPrice, size, sort]);
+
+  // Refetch new arrivals when tab changes
+  useEffect(() => {
+    fetchNewArrivals();
+  }, [newArrivalTab]);
+
+  // Refetch trending when tab changes
+  useEffect(() => {
+    fetchTrending();
+  }, [trendingTab]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -114,7 +123,13 @@ export default function Home() {
 
   const fetchNewArrivals = async () => {
     try {
-      const res = await api.get("/products", { params: { sort: "newest", limit: 10 } });
+      const params = { sort: "newest", limit: 10 };
+      if (newArrivalTab === "footwear") {
+        params.category = "footwear";
+      } else if (newArrivalTab === "accessories") {
+        params.category = "accessories";
+      }
+      const res = await api.get("/products", { params });
       setNewArrivals(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
@@ -123,7 +138,13 @@ export default function Home() {
 
   const fetchTrending = async () => {
     try {
-      const res = await api.get("/products", { params: { sort: "popularity", limit: 10 } });
+      const params = { sort: "popularity", limit: 10 };
+      if (trendingTab === "men") {
+        params.gender = "men";
+      } else if (trendingTab === "women") {
+        params.gender = "women";
+      }
+      const res = await api.get("/products", { params });
       setTrending(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching trending:", error);
@@ -181,88 +202,6 @@ export default function Home() {
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
-
-  const ProductCard = ({ product, showWishlist = true }) => (
-    <div className="flex-shrink-0 w-64 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-200 relative group">
-      <Link to={`/product/${product._id}`} className="no-underline text-inherit block">
-        <div className="w-full h-64 overflow-hidden bg-gray-100 dark:bg-gray-900 relative">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-gray-500 dark:text-gray-400">Vendor:</span>
-            <span className="text-xs font-medium">{product.brand}</span>
-            {showWishlist && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleWishlist(product._id);
-                }}
-                className="text-red-500 hover:text-red-700"
-              >
-                {isInWishlist(product._id) ? "❤️" : "🤍"}
-              </button>
-            )}
-          </div>
-          <h3 className="text-lg font-bold mb-1 line-clamp-2">{product.name}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{product.color}</p>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Regular price</span>
-            <span className="text-lg font-bold">${product.price}</span>
-          </div>
-          {product.rating > 0 && (
-            <div className="text-xs mt-2">
-              ⭐ {product.rating.toFixed(1)} ({product.numReviews})
-            </div>
-          )}
-        </div>
-      </Link>
-      {/* Add to Cart button (stops link navigation) */}
-      <div className="p-4 pt-0">
-        {/* compute available size if sizes provided */}
-        <ProductCardAdd product={product} />
-      </div>
-    </div>
-  );
-
-  // Small inner component to avoid hook rules issues
-  const ProductCardAdd = ({ product }) => {
-    const { addToCart } = useCart();
-    const availableSize = product && product.sizes && product.sizes.find((s) => Number(s.stock) > 0);
-    const canAdd = (availableSize && Number(availableSize.stock) > 0) || (!product.sizes && product.countInStock > 0);
-
-    const handleAdd = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const sizeToUse = availableSize ? availableSize.size : null;
-      if (!canAdd) {
-        alert('Out of stock');
-        return;
-      }
-      addToCart(product, sizeToUse, 1);
-      alert('Added to cart!');
-    };
-
-    return (
-      <div>
-        {canAdd ? (
-          <button
-            onClick={handleAdd}
-            className="w-full py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg font-medium hover:opacity-90 transition-opacity"
-          >
-            Add to Cart
-          </button>
-        ) : (
-          <div className="text-center text-sm text-red-500 font-medium">Out of Stock</div>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -348,14 +287,14 @@ export default function Home() {
                 FOOTWEAR
               </button>
               <button
-                onClick={() => setNewArrivalTab("apparel")}
+                onClick={() => setNewArrivalTab("accessories")}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                  newArrivalTab === "apparel"
+                  newArrivalTab === "accessories"
                     ? "bg-black dark:bg-white text-white dark:text-black"
                     : "bg-gray-200 dark:bg-gray-800"
                 }`}
               >
-                APPAREL
+                ACCESSORIES
               </button>
             </div>
           </div>
@@ -365,9 +304,19 @@ export default function Home() {
               className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {newArrivals.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="flex-shrink-0 w-64">
+                    <ProductCardSkeleton />
+                  </div>
+                ))
+              ) : (
+                newArrivals.map((product) => (
+                  <div key={product._id} className="flex-shrink-0 w-64">
+                    <ProductCard product={product} />
+                  </div>
+                ))
+              )}
             </div>
             <button
               onClick={() => scrollCarousel(newArrivalScrollRef, "left")}
@@ -383,23 +332,6 @@ export default function Home() {
             </button>
           </div>
         </section>
-
-        {/* Brand Logos Section */}
-        {brands.length > 0 && (
-          <section className="mb-16">
-            <div className="flex justify-center gap-8 flex-wrap">
-              {brands.slice(0, 6).map((brandName) => (
-                <Link
-                  key={brandName}
-                  to={`/?brand=${brandName}`}
-                  className="text-2xl font-bold hover:opacity-70 transition-opacity"
-                >
-                  {brandName.toUpperCase()}
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Trending Section */}
         <section className="mb-16">
@@ -434,9 +366,19 @@ export default function Home() {
               className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {trending.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="flex-shrink-0 w-64">
+                    <ProductCardSkeleton />
+                  </div>
+                ))
+              ) : (
+                trending.map((product) => (
+                  <div key={product._id} className="flex-shrink-0 w-64">
+                    <ProductCard product={product} />
+                  </div>
+                ))
+              )}
             </div>
             <button
               onClick={() => scrollCarousel(trendingScrollRef, "left")}
@@ -457,8 +399,10 @@ export default function Home() {
         <section id="products" className="mb-16">
           <h2 className="text-3xl font-bold mb-8">ALL PRODUCTS</h2>
           {loading ? (
-            <div className="text-center py-12 text-xl text-gray-600 dark:text-gray-400">
-              Loading...
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-16 text-xl text-gray-600 dark:text-gray-400">

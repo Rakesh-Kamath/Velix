@@ -14,6 +14,14 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    salePrice: {
+      type: Number,
+      default: null,
+    },
+    isOnSale: {
+      type: Boolean,
+      default: false,
+    },
     image: {
       type: String,
       required: true,
@@ -72,6 +80,29 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Database Indexes for Performance
+// Compound index for common filter combinations
+productSchema.index({ category: 1, brand: 1, price: 1, gender: 1 });
+
+// Individual indexes for frequently queried fields
+productSchema.index({ category: 1 });
+productSchema.index({ brand: 1 });
+productSchema.index({ price: 1 });
+productSchema.index({ gender: 1 });
+productSchema.index({ productType: 1 });
+productSchema.index({ subcategory: 1 });
+productSchema.index({ isOnSale: 1 });
+
+// Text index for search functionality
+productSchema.index({ name: 'text', description: 'text' });
+
+// Index for sorting by rating and reviews
+productSchema.index({ rating: -1 });
+productSchema.index({ numReviews: -1 });
+
+// Index for stock availability
+productSchema.index({ countInStock: 1 });
 
 export default mongoose.model("Product", productSchema);
 

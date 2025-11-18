@@ -39,11 +39,14 @@ export const WishlistProvider = ({ children }) => {
 
   const addToWishlist = async (productId) => {
     try {
-      await api.post(`/wishlist/${productId}`);
+      const response = await api.post(`/wishlist/${productId}`);
       await fetchWishlist();
       return true;
     } catch (error) {
       console.error("Error adding to wishlist:", error);
+      if (error.response?.status === 401) {
+        console.error('Authentication required');
+      }
       return false;
     }
   };

@@ -9,7 +9,9 @@ const products = [
   {
     name: "Nike Air Max 90",
     description: "Classic running shoes with air cushioning technology for maximum comfort.",
-    price: 120,
+    price: 9999,
+    salePrice: 7499,
+    isOnSale: true,
     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
     images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"],
     brand: "Nike",
@@ -31,7 +33,9 @@ const products = [
   {
     name: "Adidas Ultraboost 22",
     description: "Premium running shoes with responsive cushioning and energy return.",
-    price: 180,
+    price: 14999,
+    salePrice: 11999,
+    isOnSale: true,
     image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500",
     images: ["https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500"],
     brand: "Adidas",
@@ -53,7 +57,7 @@ const products = [
   {
     name: "Jordan 1 Retro High",
     description: "Iconic basketball sneakers with premium leather construction.",
-    price: 170,
+    price: 14199,
     image: "https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=500",
     images: ["https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=500"],
     brand: "Nike",
@@ -75,7 +79,9 @@ const products = [
   {
     name: "Vans Old Skool",
     description: "Timeless skateboarding shoes with classic checkerboard design.",
-    price: 65,
+    price: 5499,
+    salePrice: 3999,
+    isOnSale: true,
     image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500",
     images: ["https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500"],
     brand: "Vans",
@@ -97,7 +103,7 @@ const products = [
   {
     name: "New Balance 550",
     description: "Retro-inspired lifestyle sneakers with premium materials.",
-    price: 110,
+    price: 9199,
     image: "https://images.unsplash.com/photo-1605030753481-bb38b08c384a?w=500",
     images: ["https://images.unsplash.com/photo-1605030753481-bb38b08c384a?w=500"],
     brand: "New Balance",
@@ -119,7 +125,9 @@ const products = [
   {
     name: "Puma RS-X",
     description: "Futuristic design with advanced cushioning technology.",
-    price: 100,
+    price: 8299,
+    salePrice: 5999,
+    isOnSale: true,
     image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500",
     images: ["https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500"],
     brand: "Puma",
@@ -143,7 +151,9 @@ const products = [
   {
     name: "Nike Elite Crew Socks",
     description: "Premium basketball socks with cushioned footbed and arch support.",
-    price: 18,
+    price: 1499,
+    salePrice: 999,
+    isOnSale: true,
     image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=500",
     images: ["https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=500"],
     brand: "Nike",
@@ -164,7 +174,7 @@ const products = [
   {
     name: "Adidas Classic Backpack",
     description: "Spacious backpack with multiple compartments and padded straps.",
-    price: 45,
+    price: 3749,
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
     images: ["https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500"],
     brand: "Adidas",
@@ -182,7 +192,7 @@ const products = [
   {
     name: "Nike Sportswear Cap",
     description: "Classic adjustable cap with embroidered logo and breathable fabric.",
-    price: 25,
+    price: 2099,
     image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500",
     images: ["https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500"],
     brand: "Nike",
@@ -200,7 +210,7 @@ const products = [
   {
     name: "Premium Shoe Laces",
     description: "Durable flat laces suitable for all sneaker types. 140cm length.",
-    price: 8,
+    price: 669,
     image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500",
     images: ["https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500"],
     brand: "Lace Lab",
@@ -218,7 +228,7 @@ const products = [
   {
     name: "Comfort Gel Insoles",
     description: "Shock-absorbing gel insoles for maximum comfort and support.",
-    price: 22,
+    price: 1829,
     image: "https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=500",
     images: ["https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=500"],
     brand: "Dr. Scholl's",
@@ -238,7 +248,9 @@ const products = [
   {
     name: "Sneaker Cleaning Kit",
     description: "Complete cleaning solution with brush, solution, and microfiber cloth.",
-    price: 35,
+    price: 2919,
+    salePrice: 2199,
+    isOnSale: true,
     image: "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=500",
     images: ["https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=500"],
     brand: "Crep Protect",
@@ -256,7 +268,7 @@ const products = [
   {
     name: "Puma Training Socks (3-Pack)",
     description: "Moisture-wicking athletic socks with reinforced heel and toe.",
-    price: 15,
+    price: 1249,
     image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=500",
     images: ["https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=500"],
     brand: "Puma",
@@ -276,7 +288,7 @@ const products = [
   {
     name: "Jordan Crossbody Bag",
     description: "Compact crossbody bag with adjustable strap and multiple pockets.",
-    price: 55,
+    price: 4579,
     image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500",
     images: ["https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500"],
     brand: "Nike",
