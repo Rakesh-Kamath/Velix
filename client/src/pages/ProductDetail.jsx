@@ -23,6 +23,8 @@ export default function ProductDetail() {
   const [qty, setQty] = useState(1);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [showAboutProduct, setShowAboutProduct] = useState(false);
+  const [showProductDetails, setShowProductDetails] = useState(false);
 
   useEffect(() => {
     fetchProduct();
@@ -162,7 +164,6 @@ export default function ProductDetail() {
               )}
             </div>
           </div>
-          <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-8">{product.description}</p>
 
           <div className="flex gap-2 mb-8">
             <button
@@ -286,6 +287,56 @@ export default function ProductDetail() {
           >
             {allSizes.some(s => s.stock > 0) ? 'Add to Cart' : 'Out of Stock'}
           </button>
+
+          {/* About Product Dropdown */}
+          {product.aboutProduct && (
+            <div className="mt-8 border border-gray-300 dark:border-gray-700 rounded-lg">
+              <button
+                onClick={() => setShowAboutProduct(!showAboutProduct)}
+                className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+              >
+                <span className="text-lg font-semibold">About Product</span>
+                <svg
+                  className={`w-5 h-5 transition-transform ${showAboutProduct ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {showAboutProduct && (
+                <div className="px-6 py-4 border-t border-gray-300 dark:border-gray-700">
+                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">{product.aboutProduct}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Product Details Dropdown */}
+          {product.productDetails && (
+            <div className="mt-6 border border-gray-300 dark:border-gray-700 rounded-lg">
+              <button
+                onClick={() => setShowProductDetails(!showProductDetails)}
+                className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+              >
+                <span className="text-lg font-semibold">Product Details</span>
+                <svg
+                  className={`w-5 h-5 transition-transform ${showProductDetails ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {showProductDetails && (
+                <div className="px-6 py-4 border-t border-gray-300 dark:border-gray-700">
+                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">{product.productDetails}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

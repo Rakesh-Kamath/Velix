@@ -22,7 +22,9 @@ export default function ProductForm() {
     productType: '',
     sizes: [{ size: '', stock: '' }],
     color: '',
-    countInStock: ''
+    countInStock: '',
+    aboutProduct: '',
+    productDetails: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -62,7 +64,9 @@ export default function ProductForm() {
           ? product.sizes.map(size => ({ size: size.size, stock: size.stock }))
           : [{ size: '', stock: '' }],
         color: product.color || '',
-        countInStock: product.countInStock || ''
+        countInStock: product.countInStock || '',
+        aboutProduct: product.aboutProduct || '',
+        productDetails: product.productDetails || ''
       });
     } catch (err) {
       setError('Failed to fetch product');
@@ -188,20 +192,6 @@ export default function ProductForm() {
             />
           </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Description *
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category *
@@ -284,6 +274,39 @@ export default function ProductForm() {
               name="color"
               value={formData.color}
               onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* About Product & Product Details */}
+          <div className="md:col-span-2 mt-6">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Additional Information</h3>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              About Product
+            </label>
+            <textarea
+              name="aboutProduct"
+              value={formData.aboutProduct}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Enter detailed information about the product (features, materials, technology, etc.)"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Product Details
+            </label>
+            <textarea
+              name="productDetails"
+              value={formData.productDetails}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Enter specifications (e.g., Upper: Leather, Midsole: EVA foam, Outsole: Rubber, Weight: 300g, etc.)"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
