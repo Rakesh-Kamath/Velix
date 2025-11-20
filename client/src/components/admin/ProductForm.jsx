@@ -204,7 +204,7 @@ export default function ProductForm() {
                 </>
               ) : (
                 <>
-                  <option value="adidas">adidas</option>
+                  <option value="Adidas">Adidas</option>
                   <option value="FDMTL">FDMTL</option>
                   <option value="Gaston Luga">Gaston Luga</option>
                   <option value="Happy Socks">Happy Socks</option>
