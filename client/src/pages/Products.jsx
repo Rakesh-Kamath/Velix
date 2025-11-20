@@ -174,15 +174,25 @@ export default function Products() {
               className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Brands</option>
-              <option value="Nike">Nike</option>
-              <option value="Adidas">Adidas</option>
-              <option value="Puma">Puma</option>
-              <option value="New Balance">New Balance</option>
-              <option value="Vans">Vans</option>
-              <option value="Reebok">Reebok</option>
-              <option value="Crep Protect">Crep Protect</option>
-              <option value="Dr. Scholl's">Dr. Scholl's</option>
-              <option value="Lace Lab">Lace Lab</option>
+              {category === 'accessories' ? (
+                <>
+                  <option value="adidas">adidas</option>
+                  <option value="FDMTL">FDMTL</option>
+                  <option value="Gaston Luga">Gaston Luga</option>
+                  <option value="Happy Socks">Happy Socks</option>
+                  <option value="MM6">MM6</option>
+                  <option value="Nike">Nike</option>
+                </>
+              ) : (
+                <>
+                  <option value="Nike">Nike</option>
+                  <option value="Puma">Puma</option>
+                  <option value="Reebok">Reebok</option>
+                  <option value="Converse">Converse</option>
+                  <option value="Asics">Asics</option>
+                  <option value="New Balance">New Balance</option>
+                </>
+              )}
             </select>
           </div>
 

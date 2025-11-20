@@ -185,14 +185,34 @@ export default function ProductForm() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Brand *
             </label>
-            <input
-              type="text"
+            <select
               name="brand"
               value={formData.brand}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              <option value="">Select Brand</option>
+              {formData.category === 'footwear' ? (
+                <>
+                  <option value="Nike">Nike</option>
+                  <option value="Puma">Puma</option>
+                  <option value="Reebok">Reebok</option>
+                  <option value="Converse">Converse</option>
+                  <option value="Asics">Asics</option>
+                  <option value="New Balance">New Balance</option>
+                </>
+              ) : (
+                <>
+                  <option value="adidas">adidas</option>
+                  <option value="FDMTL">FDMTL</option>
+                  <option value="Gaston Luga">Gaston Luga</option>
+                  <option value="Happy Socks">Happy Socks</option>
+                  <option value="MM6">MM6</option>
+                  <option value="Nike">Nike</option>
+                </>
+              )}
+            </select>
           </div>
 
           <div>
