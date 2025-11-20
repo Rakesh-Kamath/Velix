@@ -51,7 +51,7 @@ export default function Cart() {
               <div className="flex-1 min-w-0">
                 <h3 className="text-xl font-semibold mb-1">{item.product.name}</h3>
                 <p className="text-gray-600 dark:text-gray-400">Size: {item.size}</p>
-                <p className="text-lg font-bold mt-2">${item.product.price}</p>
+                <p className="text-lg font-bold mt-2">₹{item.product.price.toLocaleString('en-IN')}</p>
               </div>
               <div className="flex items-center gap-4">
                 <button
@@ -69,7 +69,7 @@ export default function Cart() {
                 </button>
               </div>
               <div className="text-xl font-bold">
-                ${(item.product.price * item.qty).toFixed(2)}
+                ₹{(item.product.price * item.qty).toLocaleString('en-IN')}
               </div>
               <button
                 className="text-2xl hover:opacity-70 transition-opacity"
@@ -86,19 +86,19 @@ export default function Cart() {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping:</span>
-                <span>${shipping.toFixed(2)}</span>
+                <span>₹{shipping.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
                 <span>Tax:</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₹{tax.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-xl font-bold pt-3 border-t border-gray-300 dark:border-gray-700">
                 <span>Total:</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toLocaleString('en-IN')}</span>
               </div>
             </div>
             <button

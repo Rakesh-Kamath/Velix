@@ -290,26 +290,26 @@ export default function Checkout() {
                     <p className="font-medium truncate">{item.product.name}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Size: {item.size} × {item.qty}</p>
                   </div>
-                  <p className="font-bold">${(item.product.price * item.qty).toFixed(2)}</p>
+                  <p className="font-bold">₹{(item.product.price * item.qty).toLocaleString('en-IN')}</p>
                 </div>
               ))}
             </div>
             <div className="space-y-3 pt-4 border-t border-gray-300 dark:border-gray-700">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping:</span>
-                <span>${shipping.toFixed(2)}</span>
+                <span>₹{shipping.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
                 <span>Tax:</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₹{tax.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-xl font-bold pt-3 border-t border-gray-300 dark:border-gray-700">
                 <span>Total:</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toLocaleString('en-IN')}</span>
               </div>
             </div>
           </div>
