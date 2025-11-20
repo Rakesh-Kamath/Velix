@@ -192,10 +192,21 @@ export const getProductById = async (req, res) => {
 // @access  Private/Admin
 export const createProduct = async (req, res) => {
   try {
-    const product = new Product(req.body);
+    console.log('Create product request body:', req.body);
+    console.log('User making request:', req.user);
+    
+    // Clean up the data - remove empty productType for footwear
+    const productData = { ...req.body };
+    if (productData.productType === '') {
+      delete productData.productType;
+    }
+    
+    const product = new Product(productData);
     const createdProduct = await product.save();
+    console.log('Product created successfully:', createdProduct._id);
     res.status(201).json(createdProduct);
   } catch (error) {
+    console.error('Error creating product:', error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -207,13 +218,20 @@ export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
-      Object.assign(product, req.body);
+      // Clean up the data - remove empty productType for footwear
+      const productData = { ...req.body };
+      if (productData.productType === '') {
+        delete productData.productType;
+      }
+      
+      Object.assign(product, productData);
       const updatedProduct = await product.save();
       res.json(updatedProduct);
     } else {
       res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
+    console.error('Error updating product:', error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
