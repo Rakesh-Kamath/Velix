@@ -12,15 +12,18 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    const availableSize = product?.sizes?.find((s) => Number(s.stock) > 0);
-    const canAdd = (availableSize && Number(availableSize.stock) > 0) || (!product.sizes && product.countInStock > 0);
+    const hasSizes = product?.sizes && product.sizes.length > 0;
+    const availableSize = hasSizes ? product.sizes.find((s) => Number(s.stock) > 0) : null;
+    const canAdd = hasSizes 
+      ? (availableSize && Number(availableSize.stock) > 0)
+      : product.countInStock > 0;
 
     if (!canAdd) {
       toast.error('Out of stock');
       return;
     }
 
-    const sizeToUse = availableSize ? availableSize.size : null;
+    const sizeToUse = availableSize ? availableSize.size : 'One Size';
     addToCart(product, sizeToUse, 1);
     toast.success('Added to cart!');
   };
@@ -48,8 +51,11 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
     }
   };
 
-  const availableSize = product?.sizes?.find((s) => Number(s.stock) > 0);
-  const canAdd = (availableSize && Number(availableSize.stock) > 0) || (!product.sizes && product.countInStock > 0);
+  const hasSizes = product?.sizes && product.sizes.length > 0;
+  const availableSize = hasSizes ? product.sizes.find((s) => Number(s.stock) > 0) : null;
+  const canAdd = hasSizes 
+    ? (availableSize && Number(availableSize.stock) > 0)
+    : product.countInStock > 0;
   
   const displayPrice = product.isOnSale && product.salePrice ? product.salePrice : product.price;
   const discount = product.isOnSale && product.salePrice 
