@@ -110,13 +110,16 @@ export default function ProductForm() {
     setError('');
 
     try {
+      // Filter out empty sizes
+      const validSizes = formData.sizes.filter(size => size.size && size.stock !== '');
+      
       // Prepare data for submission
       const submitData = {
         ...formData,
         price: Number(formData.price),
         salePrice: formData.salePrice ? Number(formData.salePrice) : null,
         countInStock: Number(formData.countInStock),
-        sizes: formData.sizes.map(size => ({
+        sizes: validSizes.map(size => ({
           size: size.size,
           stock: Number(size.stock)
         }))
@@ -421,7 +424,8 @@ export default function ProductForm() {
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Sizes and Stock
+              Sizes and Stock {formData.category === 'footwear' && <span className="text-red-500">*</span>}
+              {formData.category === 'accessories' && <span className="text-sm text-gray-500">(Optional for accessories)</span>}
             </label>
             <div className="space-y-3">
               {formData.sizes.map((size, index) => (
