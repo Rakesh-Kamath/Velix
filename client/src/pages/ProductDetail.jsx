@@ -83,11 +83,14 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    // For products with sizes, size must be selected
+    if (allSizes.length > 0 && !selectedSize) {
       toast.error("Please select a size");
       return;
     }
-    addToCart(product, selectedSize, qty);
+    // For accessories without sizes, use 'One Size' as default
+    const sizeToAdd = allSizes.length > 0 ? selectedSize : 'One Size';
+    addToCart(product, sizeToAdd, qty);
     toast.success(`Added ${qty} item(s) to cart!`);
   };
 
@@ -219,11 +222,11 @@ export default function ProductDetail() {
 
           {showSizeGuide && <SizeGuide />}
 
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold mb-4">Select Size:</h3>
-            <div className="flex gap-2 flex-wrap">
-              {allSizes.length > 0 ? (
-                allSizes.map((sizeObj) => {
+          {allSizes.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-4">Select Size:</h3>
+              <div className="flex gap-2 flex-wrap">
+                {allSizes.map((sizeObj) => {
                   const isAvailable = sizeObj.stock > 0;
                   const isSelected = selectedSize === sizeObj.size;
                   return (
@@ -245,14 +248,12 @@ export default function ProductDetail() {
                       )}
                     </button>
                   );
-                })
-              ) : (
-                <p className="font-medium">No sizes available</p>
-              )}
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
-          {allSizes.some(s => s.stock > 0) && (
+          {(allSizes.length === 0 || allSizes.some(s => s.stock > 0)) && (
             <div className="mb-8">
               <label className="block mb-2 font-medium">Quantity:</label>
               <div className="flex items-center gap-4">
@@ -283,9 +284,9 @@ export default function ProductDetail() {
           <button
             className="w-full py-4 bg-black dark:bg-white text-white dark:text-black rounded-lg text-xl font-bold hover:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleAddToCart}
-            disabled={!selectedSize || !allSizes.some(s => s.stock > 0)}
+            disabled={(allSizes.length > 0 && !selectedSize) || (allSizes.length > 0 && !allSizes.some(s => s.stock > 0)) || (allSizes.length === 0 && product.countInStock === 0)}
           >
-            {allSizes.some(s => s.stock > 0) ? 'Add to Cart' : 'Out of Stock'}
+            {(allSizes.length > 0 && allSizes.some(s => s.stock > 0)) || (allSizes.length === 0 && product.countInStock > 0) ? 'Add to Cart' : 'Out of Stock'}
           </button>
 
           {/* About Product Dropdown */}
