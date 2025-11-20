@@ -8,7 +8,8 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     price: {
       type: Number,
@@ -61,6 +62,14 @@ const productSchema = new mongoose.Schema(
     color: {
       type: String,
       required: true,
+    },
+    aboutProduct: {
+      type: String,
+      default: "",
+    },
+    productDetails: {
+      type: String,
+      default: "",
     },
     rating: {
       type: Number,
