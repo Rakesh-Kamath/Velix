@@ -28,6 +28,14 @@ export default function Profile() {
     }
   };
 
+  // Helper to format price - handles legacy USD data by converting if value is small
+  const formatPrice = (price) => {
+    // Heuristic: If price is less than 600, it's likely USD (since cheapest INR item is 669)
+    // Convert USD to INR (approx 85)
+    const value = price < 600 ? price * 85 : price;
+    return value.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  };
+
   if (!user) {
     return null;
   }
@@ -36,24 +44,37 @@ export default function Profile() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-4xl font-bold mb-8">My Profile</h1>
       <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-xl shadow-md p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4">Account Information</h2>
-        <p className="text-lg mb-2">
-          <strong>Name:</strong> {user.name}
-        </p>
-        <p className="text-lg mb-2">
-          <strong>Email:</strong> {user.email}
-        </p>
-        <p className="text-lg mb-2">
-          <strong>Role:</strong> {user.role}
-        </p>
-        {user.role === 'admin' && (
-          <Link 
-            to="/admin" 
-            className="mt-4 inline-block px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
-          >
-            Admin Dashboard
-          </Link>
-        )}
+        <div className="flex items-start gap-6">
+          {user.avatar && (
+            <img 
+              src={user.avatar} 
+              alt={user.name} 
+              className="w-24 h-24 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+            />
+          )}
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold mb-4">Account Information</h2>
+            <p className="text-lg mb-2">
+              <strong>Name:</strong> {user.name}
+            </p>
+            <p className="text-lg mb-2">
+              <strong>Email:</strong> {user.email}
+            </p>
+            {user.role === 'admin' && (
+              <>
+                <p className="text-lg mb-2">
+                  <strong>Role:</strong> {user.role}
+                </p>
+                <Link 
+                  to="/admin" 
+                  className="mt-4 inline-block px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
+                >
+                  Admin Dashboard
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       <div>
@@ -105,12 +126,12 @@ export default function Profile() {
                         <p className="font-medium">{item.name}</p>
                         <p className="text-gray-600 dark:text-gray-400">Size: {item.size} × {item.qty}</p>
                       </div>
-                      <p className="font-bold">${(item.price * item.qty).toFixed(2)}</p>
+                      <p className="font-bold">₹{formatPrice(item.price * item.qty)}</p>
                     </div>
                   ))}
                 </div>
                 <div className="pt-4 border-t border-gray-300 dark:border-gray-700">
-                  <strong className="text-xl">Total: ${order.totalPrice.toFixed(2)}</strong>
+                  <strong className="text-xl">Total: ₹{formatPrice(order.totalPrice)}</strong>
                 </div>
               </div>
             ))}

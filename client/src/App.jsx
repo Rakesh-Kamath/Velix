@@ -5,7 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { WishlistProvider } from "./context/WishlistContext";
-import { ComparisonProvider } from "./context/ComparisonContext";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AdminRoute from "./components/AdminRoute";
@@ -28,15 +28,14 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const SharedWishlist = lazy(() => import("./pages/SharedWishlist"));
-const Comparison = lazy(() => import("./pages/Comparison"));
+
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <WishlistProvider>
-          <ComparisonProvider>
-            <CartProvider>
+          <CartProvider>
               <Router>
                 <Toaster
                   position="top-right"
@@ -45,6 +44,7 @@ function App() {
                     style: {
                       background: '#363636',
                       color: '#fff',
+                      marginTop: '80px', // Push below the sticky navbar
                     },
                     success: {
                       duration: 3000,
@@ -85,7 +85,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="/wishlist/shared/:token" element={<SharedWishlist />} />
-                    <Route path="/comparison" element={<Comparison />} />
+
                     
                     {/* Admin Routes */}
                     <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -96,7 +96,7 @@ function App() {
                 </Suspense>
               </Router>
             </CartProvider>
-          </ComparisonProvider>
+
         </WishlistProvider>
       </AuthProvider>
     </ThemeProvider>

@@ -19,8 +19,8 @@ export default function Checkout() {
   const [loadingRazorpay, setLoadingRazorpay] = useState(false);
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? 10 : 0;
-  const tax = subtotal * 0.1;
+  const shipping = 0;
+  const tax = subtotal * 0.18;
   const total = subtotal + shipping + tax;
 
   const handleSubmit = async (e) => {

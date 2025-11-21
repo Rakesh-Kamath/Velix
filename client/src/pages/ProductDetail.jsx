@@ -5,7 +5,7 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { useComparison } from "../context/ComparisonContext";
+
 import ReviewList from "../components/ReviewList";
 import ReviewForm from "../components/ReviewForm";
 import SizeGuide from "../components/SizeGuide";
@@ -16,7 +16,7 @@ export default function ProductDetail() {
   const { user } = useAuth();
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const { addToComparison } = useComparison();
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -198,18 +198,7 @@ export default function ProductDetail() {
             >
               {isInWishlist(product._id) ? "❤️ In Wishlist" : "🤍 Add to Wishlist"}
             </button>
-            <button
-              onClick={() => {
-                if (addToComparison(product)) {
-                  toast.success("Added to comparison!");
-                } else {
-                  toast.error("Comparison list is full (max 4 items)");
-                }
-              }}
-              className="px-6 py-3 border-2 border-gray-300 dark:border-gray-700 rounded-lg font-medium hover:border-black dark:hover:border-white transition-colors"
-            >
-              ⚖️ Compare
-            </button>
+
           </div>
 
           <div className="mb-4">

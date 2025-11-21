@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
-import { useComparison } from "../context/ComparisonContext";
+
 import ProductCard from "../components/ProductCard";
 import ProductCardSkeleton from "../components/ProductCardSkeleton";
 import Footer from "../components/Footer";
 
 export default function Home() {
-  const { addToComparison } = useComparison();
+
   const [products, setProducts] = useState([]);
   const [newArrivals, setNewArrivals] = useState([]);
   const [trending, setTrending] = useState([]);

@@ -22,6 +22,12 @@ export default function OrderSuccess() {
     }
   };
 
+  // Helper to format price - handles legacy USD data by converting if value is small
+  const formatPrice = (price) => {
+    const value = price < 600 ? price * 85 : price;
+    return value.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  };
+
   if (loading) {
     return <div className="text-center py-12 text-xl text-gray-600 dark:text-gray-400">Loading...</div>;
   }
@@ -64,7 +70,7 @@ export default function OrderSuccess() {
                 <p className="font-medium">{item.name}</p>
                 <p className="text-gray-600 dark:text-gray-400">Size: {item.size} × {item.qty}</p>
               </div>
-              <p className="font-bold text-lg">${(item.price * item.qty).toFixed(2)}</p>
+              <p className="font-bold text-lg">₹{formatPrice(item.price * item.qty)}</p>
             </div>
           ))}
         </div>
@@ -81,19 +87,19 @@ export default function OrderSuccess() {
         <div className="space-y-3 pt-4 border-t border-gray-300 dark:border-gray-700">
           <div className="flex justify-between">
             <span>Subtotal:</span>
-            <span>${order.itemsPrice.toFixed(2)}</span>
+            <span>₹{formatPrice(order.itemsPrice)}</span>
           </div>
           <div className="flex justify-between">
             <span>Shipping:</span>
-            <span>${order.shippingPrice.toFixed(2)}</span>
+            <span>₹{formatPrice(order.shippingPrice)}</span>
           </div>
           <div className="flex justify-between">
             <span>Tax:</span>
-            <span>${order.taxPrice.toFixed(2)}</span>
+            <span>₹{formatPrice(order.taxPrice)}</span>
           </div>
           <div className="flex justify-between text-xl font-bold pt-3 border-t border-gray-300 dark:border-gray-700">
             <span>Total:</span>
-            <span>${order.totalPrice.toFixed(2)}</span>
+            <span>₹{formatPrice(order.totalPrice)}</span>
           </div>
         </div>
       </div>

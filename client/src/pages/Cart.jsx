@@ -12,8 +12,8 @@ export default function Cart() {
   const navigate = useNavigate();
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 0 ? 10 : 0;
-  const tax = subtotal * 0.1;
+  const shipping = 0; // Free shipping
+  const tax = subtotal * 0.18; // 18% GST
   const total = subtotal + shipping + tax;
 
   if (cartItems.length === 0) {
