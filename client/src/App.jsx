@@ -5,6 +5,8 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import HelpCenter from "./pages/HelpCenter";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -29,6 +31,15 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const SharedWishlist = lazy(() => import("./pages/SharedWishlist"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const ReturnExchange = lazy(() => import("./pages/ReturnExchange"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
+const OrderShipping = lazy(() => import("./pages/OrderShipping"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const Releases = lazy(() => import("./pages/Releases"));
+const StoreLocator = lazy(() => import("./pages/StoreLocator"));
+const Brands = lazy(() => import("./pages/Brands"));
 
 
 function App() {
@@ -86,7 +97,17 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="/wishlist/shared/:token" element={<SharedWishlist />} />
-
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/help-center" element={<HelpCenter />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/return-exchange" element={<ReturnExchange />} />
+                    <Route path="/terms-conditions" element={<TermsConditions />} />
+                    <Route path="/order-shipping" element={<OrderShipping />} />
+                    <Route path="/about-us" element={<AboutUs />} />
+                    <Route path="/contact-us" element={<ContactUs />} />
+                    <Route path="/releases" element={<Releases />} />
+                    <Route path="/store-locator" element={<StoreLocator />} />
+                    <Route path="/brands" element={<Brands />} />
                     
                     {/* Admin Routes */}
                     <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
