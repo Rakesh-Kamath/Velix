@@ -116,7 +116,7 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const params = {};
+      const params = { limit: 20 }; // Add default limit
       if (category) params.category = category;
       if (searchKeyword) params.keyword = searchKeyword;
       if (brand) params.brand = brand;
@@ -126,9 +126,11 @@ export default function Home() {
       if (sort) params.sort = sort;
 
       const res = await api.get("/products", { params });
-      setProducts(res.data.products || res.data);
+      const fetchedProducts = res.data.products || res.data || [];
+      setProducts(Array.isArray(fetchedProducts) ? fetchedProducts : []);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -143,9 +145,11 @@ export default function Home() {
         params.category = "accessories";
       }
       const res = await api.get("/products", { params });
-      setNewArrivals(res.data.products || res.data);
+      const fetchedProducts = res.data.products || res.data || [];
+      setNewArrivals(Array.isArray(fetchedProducts) ? fetchedProducts : []);
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
+      setNewArrivals([]);
     }
   };
 
@@ -158,9 +162,11 @@ export default function Home() {
         params.gender = "women";
       }
       const res = await api.get("/products", { params });
-      setTrending(res.data.products || res.data);
+      const fetchedProducts = res.data.products || res.data || [];
+      setTrending(Array.isArray(fetchedProducts) ? fetchedProducts : []);
     } catch (error) {
       console.error("Error fetching trending:", error);
+      setTrending([]);
     }
   };
 
@@ -220,7 +226,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero Carousel */}
-      <div className="relative w-full h-[500px] overflow-hidden mb-12">
+      <div className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] overflow-hidden mb-8 sm:mb-12">
         {heroSlides.map((slide, index) => (
           <div
             key={index}
@@ -259,12 +265,12 @@ export default function Home() {
             )}
             <div className="absolute inset-0 flex items-center justify-center text-white text-center px-4 z-10">
               <div className="max-w-3xl">
-                <h1 className="text-6xl font-bold mb-4 animate-fadeIn">{slide.title}</h1>
-                <p className="text-3xl opacity-90 mb-2">{slide.subtitle}</p>
-                <p className="text-xl opacity-80 mb-8">{slide.description}</p>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-4 animate-fadeIn">{slide.title}</h1>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl opacity-90 mb-1 sm:mb-2">{slide.subtitle}</p>
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl opacity-80 mb-4 sm:mb-6 md:mb-8">{slide.description}</p>
                 <Link
                   to={slide.link}
-                  className="px-8 py-4 bg-white text-black rounded-lg text-lg font-bold hover:opacity-90 transition-opacity inline-block"
+                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-white text-black rounded-lg text-sm sm:text-base md:text-lg font-bold hover:opacity-90 transition-opacity inline-block"
                 >
                   {slide.cta}
                 </Link>
@@ -307,11 +313,12 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
         {/* New Arrivals Section */}
-        <section className="mb-16">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold">NEW ARRIVAL</h2>
+        <section className="mb-12 sm:mb-16">
+          <div className="flex justify-between items-center mb-4 sm:mb-6 px-2 sm:px-0">
+            <h2 className="text-2xl sm:text-3xl font-bold">NEW ARRIVAL</h2>
             <div className="flex gap-8">
               <button
                 onClick={() => setNewArrivalTab("footwear")}
@@ -341,21 +348,23 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="relative">
+          <div className="relative -mx-2 sm:mx-0">
             <div
               ref={newArrivalScrollRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+              className="flex gap-3 sm:gap-4 overflow-x-scroll px-2 sm:px-0 pb-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="flex-shrink-0 w-64">
+                  <div key={i} className="flex-shrink-0 w-[280px]">
                     <ProductCardSkeleton />
                   </div>
                 ))
+              ) : newArrivals.length === 0 ? (
+                <div className="w-full text-center py-8 text-gray-500">No new arrivals</div>
               ) : (
                 newArrivals.map((product) => (
-                  <div key={product._id} className="flex-shrink-0 w-64">
+                  <div key={product._id} className="flex-shrink-0 w-[280px]">
                     <ProductCard product={product} />
                   </div>
                 ))
@@ -363,13 +372,13 @@ export default function Home() {
             </div>
             <button
               onClick={() => scrollCarousel(newArrivalScrollRef, "left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+              className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900 z-10"
             >
               ←
             </button>
             <button
               onClick={() => scrollCarousel(newArrivalScrollRef, "right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+              className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900 z-10"
             >
               →
             </button>
@@ -377,9 +386,9 @@ export default function Home() {
         </section>
 
         {/* Trending Section */}
-        <section className="mb-16">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-3xl font-bold">TRENDING</h2>
+        <section className="mb-12 sm:mb-16">
+          <div className="flex justify-between items-center mb-4 sm:mb-6 px-2 sm:px-0">
+            <h2 className="text-2xl sm:text-3xl font-bold">TRENDING</h2>
             <div className="flex gap-8">
               <button
                 onClick={() => setTrendingTab("men")}
@@ -409,21 +418,23 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="relative">
+          <div className="relative -mx-2 sm:mx-0">
             <div
               ref={trendingScrollRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
+              className="flex gap-3 sm:gap-4 overflow-x-scroll px-2 sm:px-0 pb-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="flex-shrink-0 w-64">
+                  <div key={i} className="flex-shrink-0 w-[280px]">
                     <ProductCardSkeleton />
                   </div>
                 ))
+              ) : trending.length === 0 ? (
+                <div className="w-full text-center py-8 text-gray-500">No trending products</div>
               ) : (
                 trending.map((product) => (
-                  <div key={product._id} className="flex-shrink-0 w-64">
+                  <div key={product._id} className="flex-shrink-0 w-[280px]">
                     <ProductCard product={product} />
                   </div>
                 ))
@@ -431,13 +442,13 @@ export default function Home() {
             </div>
             <button
               onClick={() => scrollCarousel(trendingScrollRef, "left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+              className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900 z-10"
             >
               ←
             </button>
             <button
               onClick={() => scrollCarousel(trendingScrollRef, "right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900"
+              className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-black border-2 border-gray-300 dark:border-gray-700 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-900 z-10"
             >
               →
             </button>
@@ -445,26 +456,27 @@ export default function Home() {
         </section>
 
         {/* All Products Section */}
-        <section id="products" className="mb-16">
-          <h2 className="text-3xl font-bold mb-8">ALL PRODUCTS</h2>
+        <section id="products" className="mb-12 sm:mb-16 px-2 sm:px-0">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">ALL PRODUCTS</h2>
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
             </div>
           ) : products.length === 0 ? (
-            <div className="text-center py-16 text-xl text-gray-600 dark:text-gray-400">
+            <div className="text-center py-12 sm:py-16 text-lg sm:text-xl text-gray-600 dark:text-gray-400">
               No products found
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               {products.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </div>
           )}
         </section>
+        </div>
       </div>
 
       <Footer />

@@ -41,42 +41,45 @@ export default function Cart() {
           {cartItems.map((item, index) => (
             <div
               key={`${item.product._id}-${item.size}-${index}`}
-              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-xl shadow-md p-6 flex flex-col sm:flex-row gap-4 items-center"
+              className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-xl shadow-md p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center"
             >
               <img
                 src={item.product.image}
                 alt={item.product.name}
-                className="w-24 h-24 object-cover rounded-lg"
+                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg flex-shrink-0"
               />
-              <div className="flex-1 min-w-0">
-                <h3 className="text-xl font-semibold mb-1">{item.product.name}</h3>
-                <p className="text-gray-600 dark:text-gray-400">Size: {item.size}</p>
-                <p className="text-lg font-bold mt-2">₹{item.product.price.toLocaleString('en-IN')}</p>
+              <div className="flex-1 min-w-0 w-full">
+                <h3 className="text-base sm:text-xl font-semibold mb-1 line-clamp-1">{item.product.name}</h3>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Size: {item.size}</p>
+                <p className="text-base sm:text-lg font-bold mt-1 sm:mt-2">₹{item.product.price.toLocaleString('en-IN')}</p>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-start flex-wrap">
+                <div className="flex items-center gap-2 sm:gap-4">
+                  <button
+                    className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-black dark:hover:border-white transition-colors flex items-center justify-center text-lg"
+                    onClick={() => updateCartItemQty(item.product._id, item.size, item.qty - 1)}
+                  >
+                    -
+                  </button>
+                  <span className="text-base sm:text-lg font-medium w-6 sm:w-8 text-center">{item.qty}</span>
+                  <button
+                    className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-black dark:hover:border-white transition-colors flex items-center justify-center text-lg"
+                    onClick={() => updateCartItemQty(item.product._id, item.size, item.qty + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="text-base sm:text-xl font-bold">
+                  ₹{(item.product.price * item.qty).toLocaleString('en-IN')}
+                </div>
                 <button
-                  className="w-10 h-10 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-black dark:hover:border-white transition-colors"
-                  onClick={() => updateCartItemQty(item.product._id, item.size, item.qty - 1)}
+                  className="text-xl sm:text-2xl hover:opacity-70 transition-opacity p-1"
+                  onClick={() => removeFromCart(item.product._id, item.size)}
+                  aria-label="Remove item"
                 >
-                  -
-                </button>
-                <span className="text-lg font-medium w-8 text-center">{item.qty}</span>
-                <button
-                  className="w-10 h-10 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-black dark:hover:border-white transition-colors"
-                  onClick={() => updateCartItemQty(item.product._id, item.size, item.qty + 1)}
-                >
-                  +
+                  ×
                 </button>
               </div>
-              <div className="text-xl font-bold">
-                ₹{(item.product.price * item.qty).toLocaleString('en-IN')}
-              </div>
-              <button
-                className="text-2xl hover:opacity-70 transition-opacity"
-                onClick={() => removeFromCart(item.product._id, item.size)}
-              >
-                ×
-              </button>
             </div>
           ))}
         </div>

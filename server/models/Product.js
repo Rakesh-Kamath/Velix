@@ -113,5 +113,26 @@ productSchema.index({ numReviews: -1 });
 // Index for stock availability
 productSchema.index({ countInStock: 1 });
 
+// Custom validation: sizes required only for footwear
+productSchema.pre('validate', function(next) {
+  if (this.category === 'footwear' && (!this.sizes || this.sizes.length === 0)) {
+    this.invalidate('sizes', 'Sizes are required for footwear products');
+  }
+  
+  // Brand validation based on category
+  const footwearBrands = ['Nike', 'Puma', 'Reebok', 'Converse', 'Asics', 'New Balance'];
+  const accessoryBrands = ['Adidas', 'FDMTL', 'Gaston Luga', 'Happy Socks', 'MM6', 'Nike'];
+  
+  if (this.category === 'footwear' && !footwearBrands.includes(this.brand)) {
+    this.invalidate('brand', `Brand must be one of: ${footwearBrands.join(', ')} for footwear`);
+  }
+  
+  if (this.category === 'accessories' && !accessoryBrands.includes(this.brand)) {
+    this.invalidate('brand', `Brand must be one of: ${accessoryBrands.join(', ')} for accessories`);
+  }
+  
+  next();
+});
+
 export default mongoose.model("Product", productSchema);
 

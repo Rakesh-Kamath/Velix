@@ -195,10 +195,13 @@ export const createProduct = async (req, res) => {
     console.log('Create product request body:', req.body);
     console.log('User making request:', req.user);
     
-    // Clean up the data - remove empty productType for footwear
+    // Clean up the data - remove empty productType for footwear and empty subcategory for accessories
     const productData = { ...req.body };
     if (productData.productType === '') {
       delete productData.productType;
+    }
+    if (productData.subcategory === '') {
+      delete productData.subcategory;
     }
     
     const product = new Product(productData);
@@ -218,10 +221,13 @@ export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
-      // Clean up the data - remove empty productType for footwear
+      // Clean up the data - remove empty productType for footwear and empty subcategory for accessories
       const productData = { ...req.body };
       if (productData.productType === '') {
         delete productData.productType;
+      }
+      if (productData.subcategory === '') {
+        delete productData.subcategory;
       }
       
       Object.assign(product, productData);

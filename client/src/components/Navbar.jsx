@@ -70,34 +70,34 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white dark:bg-black border-b border-gray-300 dark:border-gray-700 py-4 shadow-lg sticky top-0 z-50 transition-colors">
-      <div className="w-full px-6 md:px-12 flex justify-between items-center relative">
+    <nav className="bg-transparent dark:bg-transparent border-b border-gray-300/30 dark:border-gray-700/30 py-2 sm:py-4 backdrop-blur-md sticky top-0 z-50 transition-colors">
+      <div className="w-full px-3 sm:px-6 md:px-12 flex justify-between items-center relative">
         {/* Logo - Far Left */}
         <Link to="/" className="flex items-center hover:opacity-90 transition-opacity z-10">
-          <span className="text-4xl font-black bg-gradient-to-r from-black via-gray-800 to-black dark:from-white dark:via-gray-300 dark:to-white bg-clip-text text-transparent tracking-tighter relative">
+          <span className="text-2xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tighter relative">
             VELIX
-            <span className="absolute -top-1 -right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <span className="absolute -top-1 -right-2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full animate-pulse"></span>
           </span>
         </Link>
 
         {/* Center Navigation */}
         <div className="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
-          <Link to="/" className="text-base font-semibold hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+          <Link to="/" className="text-base font-semibold text-white hover:text-gray-300 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             NEW ARRIVAL
           </Link>
-          <Link to="/products?category=footwear" className="text-base font-semibold hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+          <Link to="/products?category=footwear" className="text-base font-semibold text-white hover:text-gray-300 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             FOOTWEAR
           </Link>
-          <Link to="/products?category=accessories" className="text-base font-semibold hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+          <Link to="/products?category=accessories" className="text-base font-semibold text-white hover:text-gray-300 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             ACCESSORIES
           </Link>
-          <Link to="/products?sale=true" className="text-base font-semibold hover:text-gray-600 dark:hover:text-gray-400 transition-colors">
+          <Link to="/products?sale=true" className="text-base font-semibold text-white hover:text-gray-300 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             SALES
           </Link>
         </div>
 
         {/* Right Icons - Far Right */}
-        <div className="flex items-center gap-3 z-10">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3 z-10">
           {/* Search Icon */}
           <div ref={searchRef} className={`relative flex items-center transition-all duration-300 ${showSearch ? 'w-64' : 'w-10'}`}>
             <div className={`absolute right-0 top-1/2 -translate-y-1/2 flex items-center ${showSearch ? 'w-full' : 'w-10 justify-center'}`}>
