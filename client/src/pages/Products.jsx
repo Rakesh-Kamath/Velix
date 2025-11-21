@@ -322,6 +322,8 @@ export default function Products() {
             className="w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white appearance-none cursor-pointer"
           >
             <option value="">Sort By</option>
+            <option value="name-asc">Name: A to Z</option>
+            <option value="name-desc">Name: Z to A</option>
             <option value="price-low">Price: Low to High</option>
             <option value="price-high">Price: High to Low</option>
             <option value="newest">Newest</option>

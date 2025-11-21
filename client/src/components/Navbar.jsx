@@ -15,6 +15,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const searchRef = useRef(null);
   const navigate = useNavigate();
 
@@ -72,13 +73,31 @@ export default function Navbar() {
   return (
     <nav className="bg-transparent dark:bg-transparent border-b border-gray-300/30 dark:border-gray-700/30 py-2 sm:py-4 backdrop-blur-md sticky top-0 z-50 transition-colors">
       <div className="w-full px-3 sm:px-6 md:px-12 flex justify-between items-center relative">
-        {/* Logo - Far Left */}
-        <Link to="/" className="flex items-center hover:opacity-90 transition-opacity z-10">
-          <span className="text-2xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tighter relative">
-            VELIX
-            <span className="absolute -top-1 -right-2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full animate-pulse"></span>
-          </span>
-        </Link>
+        {/* Left Side - Hamburger and Logo */}
+        <div className="flex items-center gap-2 z-10">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+            aria-label="Menu"
+          >
+            <svg className="w-6 h-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {showMobileMenu ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+
+          {/* Logo */}
+          <Link to="/" className="flex items-center hover:opacity-90 transition-opacity">
+            <span className="text-2xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tighter relative">
+              VELIX
+              <span className="absolute -top-1 -right-2 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full animate-pulse"></span>
+            </span>
+          </Link>
+        </div>
 
         {/* Center Navigation */}
         <div className="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
@@ -290,6 +309,42 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {showMobileMenu && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-black border-b border-gray-300 dark:border-gray-700 shadow-lg">
+          <div className="flex flex-col">
+            <Link
+              to="/"
+              onClick={() => setShowMobileMenu(false)}
+              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border-b border-gray-200 dark:border-gray-800"
+            >
+              NEW ARRIVAL
+            </Link>
+            <Link
+              to="/products?category=footwear"
+              onClick={() => setShowMobileMenu(false)}
+              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border-b border-gray-200 dark:border-gray-800"
+            >
+              FOOTWEAR
+            </Link>
+            <Link
+              to="/products?category=accessories"
+              onClick={() => setShowMobileMenu(false)}
+              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border-b border-gray-200 dark:border-gray-800"
+            >
+              ACCESSORIES
+            </Link>
+            <Link
+              to="/products?sale=true"
+              onClick={() => setShowMobileMenu(false)}
+              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+            >
+              SALES
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

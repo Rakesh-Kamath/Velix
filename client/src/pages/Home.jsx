@@ -224,9 +224,9 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       {/* Hero Carousel */}
-      <div className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] overflow-hidden mb-8 sm:mb-12">
+      <div className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] overflow-hidden mb-4 sm:mb-6 md:mb-8">
         {heroSlides.map((slide, index) => (
           <div
             key={index}
