@@ -34,6 +34,11 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const ReturnExchange = lazy(() => import("./pages/ReturnExchange"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 const OrderShipping = lazy(() => import("./pages/OrderShipping"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const Releases = lazy(() => import("./pages/Releases"));
+const StoreLocator = lazy(() => import("./pages/StoreLocator"));
+const Brands = lazy(() => import("./pages/Brands"));
 
 
 function App() {
@@ -97,6 +102,11 @@ function App() {
                     <Route path="/return-exchange" element={<ReturnExchange />} />
                     <Route path="/terms-conditions" element={<TermsConditions />} />
                     <Route path="/order-shipping" element={<OrderShipping />} />
+                    <Route path="/about-us" element={<AboutUs />} />
+                    <Route path="/contact-us" element={<ContactUs />} />
+                    <Route path="/releases" element={<Releases />} />
+                    <Route path="/store-locator" element={<StoreLocator />} />
+                    <Route path="/brands" element={<Brands />} />
 
                     
                     {/* Admin Routes */}
