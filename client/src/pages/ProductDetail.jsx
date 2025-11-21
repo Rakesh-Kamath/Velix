@@ -25,10 +25,51 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showAboutProduct, setShowAboutProduct] = useState(false);
   const [showProductDetails, setShowProductDetails] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
+  const [currentProductIndex, setCurrentProductIndex] = useState(-1);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   useEffect(() => {
     fetchProduct();
+    fetchAllProducts();
   }, [id]);
+
+  // Auto-rotate images every 3 seconds
+  useEffect(() => {
+    if (!product || product.images.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [product]);
+
+  const fetchAllProducts = async () => {
+    try {
+      const res = await api.get("/products");
+      const products = res.data.products || res.data || [];
+      setAllProducts(products);
+      const index = products.findIndex(p => p._id === id);
+      setCurrentProductIndex(index);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const goToNextProduct = () => {
+    if (currentProductIndex >= 0 && currentProductIndex < allProducts.length - 1) {
+      const nextProduct = allProducts[currentProductIndex + 1];
+      navigate(`/product/${nextProduct._id}`);
+    }
+  };
+
+  const goToPreviousProduct = () => {
+    if (currentProductIndex > 0) {
+      const prevProduct = allProducts[currentProductIndex - 1];
+      navigate(`/product/${prevProduct._id}`);
+    }
+  };
 
   const fetchProduct = async () => {
     try {
@@ -108,7 +149,7 @@ export default function ProductDetail() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <button
-        className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg mb-8 hover:opacity-80 transition-opacity"
+        className="bg-black dark:bg-white text-white dark:text-black px-4 sm:px-6 py-2 sm:py-3 rounded-lg mb-8 hover:opacity-80 transition-opacity"
         onClick={() => navigate(-1)}
       >
         ← Back
@@ -116,12 +157,32 @@ export default function ProductDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 p-8 rounded-xl shadow-lg">
         {/* Image Gallery */}
         <div>
-          <div className="w-full h-96 lg:h-[500px] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900 mb-4">
+          <div className="relative w-full h-96 lg:h-[500px] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900 mb-4">
             <img 
               src={images[selectedImage]} 
               alt={product.name} 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover cursor-zoom-in"
+              onClick={() => setIsZoomed(true)}
             />
+            {/* Navigation Arrows */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setSelectedImage(selectedImage === 0 ? images.length - 1 : selectedImage - 1)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full transition-all"
+                  title="Previous Image"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={() => setSelectedImage(selectedImage === images.length - 1 ? 0 : selectedImage + 1)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full transition-all"
+                  title="Next Image"
+                >
+                  →
+                </button>
+              </>
+            )}
           </div>
           {/* Thumbnail Images */}
           {images.length > 1 && (
@@ -336,6 +397,57 @@ export default function ProductDetail() {
           )}
         </div>
       </div>
+
+      {/* Zoomed Image Modal */}
+      {isZoomed && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setIsZoomed(false)}
+        >
+          <button
+            onClick={() => setIsZoomed(false)}
+            className="absolute top-4 right-4 text-white text-4xl hover:opacity-70 transition-opacity"
+            title="Close"
+          >
+            ×
+          </button>
+          <div className="relative max-w-[95vw] max-h-[95vh]">
+            <img 
+              src={images[selectedImage]} 
+              alt={product.name} 
+              className="max-w-full max-h-[95vh] object-contain cursor-zoom-out"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsZoomed(false);
+              }}
+            />
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage(selectedImage === 0 ? images.length - 1 : selectedImage - 1);
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 sm:p-4 rounded-full transition-all text-2xl"
+                  title="Previous Image"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage(selectedImage === images.length - 1 ? 0 : selectedImage + 1);
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 sm:p-4 rounded-full transition-all text-2xl"
+                  title="Next Image"
+                >
+                  →
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="mt-12">
         <ReviewForm productId={id} onReviewSubmitted={() => window.location.reload()} />
