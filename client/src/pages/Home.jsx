@@ -275,26 +275,32 @@ export default function Home() {
         <section className="mb-16">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">NEW ARRIVAL</h2>
-            <div className="flex gap-2">
+            <div className="flex gap-8">
               <button
                 onClick={() => setNewArrivalTab("footwear")}
-                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                className={`pb-2 text-lg font-bold transition-all relative ${
                   newArrivalTab === "footwear"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "bg-gray-200 dark:bg-gray-800"
+                    ? "text-black dark:text-white"
+                    : "text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400"
                 }`}
               >
                 FOOTWEAR
+                {newArrivalTab === "footwear" && (
+                  <span className="absolute bottom-0 left-0 w-full h-1 bg-black dark:bg-white rounded-t-full"></span>
+                )}
               </button>
               <button
                 onClick={() => setNewArrivalTab("accessories")}
-                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                className={`pb-2 text-lg font-bold transition-all relative ${
                   newArrivalTab === "accessories"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "bg-gray-200 dark:bg-gray-800"
+                    ? "text-black dark:text-white"
+                    : "text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400"
                 }`}
               >
                 ACCESSORIES
+                {newArrivalTab === "accessories" && (
+                  <span className="absolute bottom-0 left-0 w-full h-1 bg-black dark:bg-white rounded-t-full"></span>
+                )}
               </button>
             </div>
           </div>
@@ -337,26 +343,32 @@ export default function Home() {
         <section className="mb-16">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">TRENDING</h2>
-            <div className="flex gap-2">
+            <div className="flex gap-8">
               <button
                 onClick={() => setTrendingTab("men")}
-                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                className={`pb-2 text-lg font-bold transition-all relative ${
                   trendingTab === "men"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "bg-gray-200 dark:bg-gray-800"
+                    ? "text-black dark:text-white"
+                    : "text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400"
                 }`}
               >
                 MEN
+                {trendingTab === "men" && (
+                  <span className="absolute bottom-0 left-0 w-full h-1 bg-black dark:bg-white rounded-t-full"></span>
+                )}
               </button>
               <button
                 onClick={() => setTrendingTab("women")}
-                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                className={`pb-2 text-lg font-bold transition-all relative ${
                   trendingTab === "women"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "bg-gray-200 dark:bg-gray-800"
+                    ? "text-black dark:text-white"
+                    : "text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400"
                 }`}
               >
                 WOMEN
+                {trendingTab === "women" && (
+                  <span className="absolute bottom-0 left-0 w-full h-1 bg-black dark:bg-white rounded-t-full"></span>
+                )}
               </button>
             </div>
           </div>

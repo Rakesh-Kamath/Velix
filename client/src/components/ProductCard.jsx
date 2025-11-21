@@ -65,9 +65,9 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
   return (
     <div 
       onClick={() => navigate(`/product/${product._id}`)}
-      className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg shadow hover:shadow-lg transition cursor-pointer overflow-hidden group"
+      className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg shadow hover:shadow-lg transition cursor-pointer overflow-hidden group h-full flex flex-col"
     >
-      <div className="relative w-full h-64 overflow-hidden bg-gray-100 dark:bg-gray-900">
+      <div className="relative w-full h-64 overflow-hidden bg-gray-100 dark:bg-gray-900 flex-shrink-0">
         <img
           src={product.images?.[0] || product.image}
           alt={product.name}
@@ -96,9 +96,10 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
         )}
       </div>
       
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col">
         <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{product.brand}</p>
-        <h3 className="font-semibold text-base mt-1 line-clamp-2 min-h-[3rem]">{product.name}</h3>
+        <h3 className="font-semibold text-base mt-1 line-clamp-1">{product.name}</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{product.color}</p>
         
         <div className="flex items-center gap-1 mt-2">
           <div className="flex items-center">
@@ -110,7 +111,7 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
           <span className="text-xs text-gray-500 dark:text-gray-400">({product.numReviews || 0})</span>
         </div>
 
-        <div className="flex justify-between items-center mt-3">
+        <div className="flex justify-between items-center mt-auto pt-3">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <p className="font-bold text-xl">₹{displayPrice.toLocaleString('en-IN')}</p>

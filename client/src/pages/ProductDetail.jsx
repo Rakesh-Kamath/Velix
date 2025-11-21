@@ -147,8 +147,9 @@ export default function ProductDetail() {
           )}
         </div>
         <div>
+          <p className="text-gray-600 dark:text-gray-400 text-lg mb-1 uppercase tracking-wide font-bold">{product.brand}</p>
           <h1 className="text-4xl font-bold mb-2">{product.name}</h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">{product.brand}</p>
+          <p className="text-gray-500 dark:text-gray-400 text-base mb-4">{product.color}</p>
           {product.rating > 0 && (
             <div className="text-lg mb-4">
               ⭐ {product.rating.toFixed(1)} ({product.numReviews} reviews)
@@ -291,51 +292,57 @@ export default function ProductDetail() {
 
           {/* About Product Dropdown */}
           {product.aboutProduct && (
-            <div className="mt-8 border border-gray-300 dark:border-gray-700 rounded-lg">
+            <div className="mt-8 border-b border-gray-300 dark:border-gray-700">
               <button
                 onClick={() => setShowAboutProduct(!showAboutProduct)}
-                className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                className="w-full py-4 flex justify-between items-center hover:opacity-70 transition-opacity"
               >
                 <span className="text-lg font-semibold">About Product</span>
-                <svg
-                  className={`w-5 h-5 transition-transform ${showAboutProduct ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                {showAboutProduct ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                )}
               </button>
-              {showAboutProduct && (
-                <div className="px-6 py-4 border-t border-gray-300 dark:border-gray-700">
-                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">{product.aboutProduct}</p>
-                </div>
-              )}
+              <div 
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  showAboutProduct ? 'max-h-96 opacity-100 mb-4' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">{product.aboutProduct}</p>
+              </div>
             </div>
           )}
 
           {/* Product Details Dropdown */}
           {product.productDetails && (
-            <div className="mt-6 border border-gray-300 dark:border-gray-700 rounded-lg">
+            <div className="mt-4 border-b border-gray-300 dark:border-gray-700">
               <button
                 onClick={() => setShowProductDetails(!showProductDetails)}
-                className="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                className="w-full py-4 flex justify-between items-center hover:opacity-70 transition-opacity"
               >
                 <span className="text-lg font-semibold">Product Details</span>
-                <svg
-                  className={`w-5 h-5 transition-transform ${showProductDetails ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                {showProductDetails ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                )}
               </button>
-              {showProductDetails && (
-                <div className="px-6 py-4 border-t border-gray-300 dark:border-gray-700">
-                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">{product.productDetails}</p>
-                </div>
-              )}
+              <div 
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  showProductDetails ? 'max-h-96 opacity-100 mb-4' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <p className="text-gray-600 dark:text-gray-400 whitespace-pre-line">{product.productDetails}</p>
+              </div>
             </div>
           )}
         </div>
