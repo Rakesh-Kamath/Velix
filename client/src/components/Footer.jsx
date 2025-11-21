@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 dark:bg-black text-white border-t border-gray-800 mt-16">
@@ -7,29 +9,29 @@ export default function Footer() {
             <h3 className="text-xl font-bold mb-4">INFORMATION</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/about-us" className="hover:text-white transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/contact-us" className="hover:text-white transition-colors">
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/releases" className="hover:text-white transition-colors">
                   Releases
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/store-locator" className="hover:text-white transition-colors">
                   Store Locator
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/brands" className="hover:text-white transition-colors">
                   Brands
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -38,34 +40,34 @@ export default function Footer() {
             <h3 className="text-xl font-bold mb-4">IMPORTANT LINKS</h3>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/help-center" className="hover:text-white transition-colors">
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/faq" className="hover:text-white transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/privacy-policy" className="hover:text-white transition-colors">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/return-exchange" className="hover:text-white transition-colors">
                   Return & Exchange
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/terms-conditions" className="hover:text-white transition-colors">
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition-colors">
+                <Link to="/order-shipping" className="hover:text-white transition-colors">
                   Order & Shipping
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

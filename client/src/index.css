@@ -28,6 +28,19 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Ensure horizontal scroll containers are visible */
+.overflow-x-auto {
+  overflow-x: scroll !important;
+  overflow-y: visible !important;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
