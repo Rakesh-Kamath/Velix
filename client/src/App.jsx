@@ -28,6 +28,12 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const SharedWishlist = lazy(() => import("./pages/SharedWishlist"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const ReturnExchange = lazy(() => import("./pages/ReturnExchange"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
+const OrderShipping = lazy(() => import("./pages/OrderShipping"));
 
 
 function App() {
@@ -85,6 +91,12 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="/wishlist/shared/:token" element={<SharedWishlist />} />
+                    <Route path="/help-center" element={<HelpCenter />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/return-exchange" element={<ReturnExchange />} />
+                    <Route path="/terms-conditions" element={<TermsConditions />} />
+                    <Route path="/order-shipping" element={<OrderShipping />} />
 
                     
                     {/* Admin Routes */}
