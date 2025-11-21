@@ -9,6 +9,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AdminRoute from "./components/AdminRoute";
+import ChatBot from "./components/ChatBot";
 
 // Eager load critical pages (Home, Products, ProductDetail)
 import Home from "./pages/Home";
@@ -94,6 +95,7 @@ function App() {
                     <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetails /></AdminRoute>} />
                   </Routes>
                 </Suspense>
+                <ChatBot />
               </Router>
             </CartProvider>
 

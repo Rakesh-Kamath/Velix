@@ -12,6 +12,7 @@ export default function Home() {
   const [newArrivals, setNewArrivals] = useState([]);
   const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [category, setCategory] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [brand, setBrand] = useState("");
@@ -30,6 +31,7 @@ export default function Home() {
   const newArrivalScrollRef = useRef(null);
   const trendingScrollRef = useRef(null);
   const videoRefs = useRef([]);
+  const [videoError, setVideoError] = useState({});
 
   const heroSlides = [
     {
@@ -109,6 +111,11 @@ export default function Home() {
     if (videoRefs.current[currentSlide]) {
       videoRefs.current[currentSlide].play().catch((err) => {
         console.log("Video autoplay failed:", err);
+        // Mark this video as having an error
+        setVideoError(prev => ({
+          ...prev,
+          [currentSlide]: true
+        }));
       });
     }
   }, [currentSlide]);
@@ -116,6 +123,7 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setError(null);
       const params = {};
       if (category) params.category = category;
       if (searchKeyword) params.keyword = searchKeyword;
@@ -129,6 +137,7 @@ export default function Home() {
       setProducts(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setError("Failed to load products. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -146,6 +155,7 @@ export default function Home() {
       setNewArrivals(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
+      setError("Failed to load new arrivals. Please try again later.");
     }
   };
 
@@ -161,6 +171,7 @@ export default function Home() {
       setTrending(res.data.products || res.data);
     } catch (error) {
       console.error("Error fetching trending:", error);
+      setError("Failed to load trending products. Please try again later.");
     }
   };
 
@@ -170,6 +181,7 @@ export default function Home() {
       setBrands(res.data);
     } catch (error) {
       console.error("Error fetching brands:", error);
+      setError("Failed to load brands. Please try again later.");
     }
   };
 
@@ -181,6 +193,7 @@ export default function Home() {
       setSuggestions(res.data);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
+      // Don't show error for suggestions as it's not critical
     }
   };
 
@@ -219,6 +232,14 @@ export default function Home() {
 
   return (
     <div>
+      {/* Error message display */}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+      
       {/* Hero Carousel */}
       <div className="relative w-full h-[500px] overflow-hidden mb-12">
         {heroSlides.map((slide, index) => (
@@ -228,7 +249,7 @@ export default function Home() {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            {slide.type === "video" && slide.videoUrl ? (
+            {slide.type === "video" && slide.videoUrl && !videoError[index] ? (
               <>
                 <video
                   ref={(el) => (videoRefs.current[index] = el)}
@@ -239,7 +260,13 @@ export default function Home() {
                   playsInline
                   preload="auto"
                   crossOrigin="anonymous"
-                  onError={(e) => console.error("Video error:", e)}
+                  onError={(e) => {
+                    console.error("Video error:", e);
+                    setVideoError(prev => ({
+                      ...prev,
+                      [index]: true
+                    }));
+                  }}
                   onLoadedData={() => console.log("Video loaded:", slide.videoUrl)}
                 >
                   <source src={slide.videoUrl} type="video/mp4" />
@@ -251,7 +278,7 @@ export default function Home() {
               <div
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${slide.image})`,
+                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${slide.image || '/placeholder-image.jpg'})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
