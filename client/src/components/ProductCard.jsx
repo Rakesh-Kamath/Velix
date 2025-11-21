@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 export default function ProductCard({ product, showWishlist = true, showAddToCart = true }) {
@@ -9,6 +10,25 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const images = product.images && product.images.length > 0 ? product.images : [product.image];
+
+  useEffect(() => {
+    let interval;
+    if (isHovered && images.length > 1) {
+      // Show second image immediately on hover if available
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      
+      interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }, 1200);
+    } else {
+      setCurrentImageIndex(0);
+    }
+    return () => clearInterval(interval);
+  }, [isHovered, images.length]);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
@@ -65,13 +85,15 @@ export default function ProductCard({ product, showWishlist = true, showAddToCar
   return (
     <div 
       onClick={() => navigate(`/product/${product._id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg shadow hover:shadow-lg transition cursor-pointer overflow-hidden group h-full flex flex-col"
     >
       <div className="relative w-full h-64 overflow-hidden bg-gray-100 dark:bg-gray-900 flex-shrink-0">
         <img
-          src={product.images?.[0] || product.image}
+          src={images[currentImageIndex]}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {product.isOnSale && discount > 0 && (
           <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
