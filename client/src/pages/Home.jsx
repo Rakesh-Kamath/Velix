@@ -29,13 +29,15 @@ export default function Home() {
   const searchRef = useRef(null);
   const newArrivalScrollRef = useRef(null);
   const trendingScrollRef = useRef(null);
+  const videoRefs = useRef([]);
 
   const heroSlides = [
     {
       title: "New Arrivals",
       subtitle: "Latest Premium Sneakers Collection",
       description: "Discover the newest additions to our exclusive lineup",
-      image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&h=600&fit=crop",
+      type: "video",
+      videoUrl: "/videos/hero1.mp4",
       cta: "Shop New Arrivals",
       link: "/products?category=footwear",
     },
@@ -43,7 +45,8 @@ export default function Home() {
       title: "Summer Sale",
       subtitle: "Up to 40% Off Selected Items",
       description: "Limited time offer on premium sneakers",
-      image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1200&h=600&fit=crop",
+      type: "video",
+      videoUrl: "/videos/hero2.mp4",
       cta: "Shop Sale",
       link: "/products?sale=true",
     },
@@ -51,7 +54,8 @@ export default function Home() {
       title: "Exclusive Drops",
       subtitle: "Limited Edition Releases",
       description: "Get your hands on rare and exclusive designs",
-      image: "https://images.unsplash.com/photo-1605348532760-6753d2c43329?w=1200&h=600&fit=crop",
+      type: "video",
+      videoUrl: "/videos/hero3.mp4",
       cta: "Explore Exclusives",
       link: "/products?subcategory=lifestyle",
     },
@@ -99,6 +103,15 @@ export default function Home() {
     }, 5000); // Change slide every 5 seconds
     return () => clearInterval(timer);
   }, []);
+
+  // Force video play when slide changes
+  useEffect(() => {
+    if (videoRefs.current[currentSlide]) {
+      videoRefs.current[currentSlide].play().catch((err) => {
+        console.log("Video autoplay failed:", err);
+      });
+    }
+  }, [currentSlide]);
 
   const fetchProducts = async () => {
     try {
@@ -214,13 +227,37 @@ export default function Home() {
             className={`absolute inset-0 transition-opacity duration-1000 ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
-            style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${slide.image})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
           >
-            <div className="absolute inset-0 flex items-center justify-center text-white text-center px-4">
+            {slide.type === "video" && slide.videoUrl ? (
+              <>
+                <video
+                  ref={(el) => (videoRefs.current[index] = el)}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  crossOrigin="anonymous"
+                  onError={(e) => console.error("Video error:", e)}
+                  onLoadedData={() => console.log("Video loaded:", slide.videoUrl)}
+                >
+                  <source src={slide.videoUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="absolute inset-0 bg-black/50"></div>
+              </>
+            ) : (
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${slide.image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></div>
+            )}
+            <div className="absolute inset-0 flex items-center justify-center text-white text-center px-4 z-10">
               <div className="max-w-3xl">
                 <h1 className="text-6xl font-bold mb-4 animate-fadeIn">{slide.title}</h1>
                 <p className="text-3xl opacity-90 mb-2">{slide.subtitle}</p>
