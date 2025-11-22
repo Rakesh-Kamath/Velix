@@ -282,7 +282,7 @@ export default function Home() {
                 <p className="text-sm sm:text-base md:text-lg lg:text-xl opacity-80 mb-4 sm:mb-6 md:mb-8">{slide.description}</p>
                 <Link
                   to={slide.link}
-                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-white text-black rounded-lg text-sm sm:text-base md:text-lg font-bold hover:opacity-90 transition-opacity inline-block"
+                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-white dark:bg-white text-black dark:text-black rounded-lg text-sm sm:text-base md:text-lg font-bold hover:bg-gray-100 dark:hover:bg-gray-100 transition-all inline-block shadow-lg"
                 >
                   {slide.cta}
                 </Link>

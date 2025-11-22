@@ -24,11 +24,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/store-locator" className="hover:text-white transition-colors">
-                  Store Locator
-                </Link>
-              </li>
-              <li>
                 <Link to="/brands" className="hover:text-white transition-colors">
                   Brands
                 </Link>
@@ -86,32 +81,6 @@ export default function Footer() {
               <button className="px-6 py-2 bg-white text-black rounded-lg font-medium hover:opacity-90 transition-opacity">
                 Subscribe
               </button>
-            </div>
-            <div className="mt-6">
-              <h3 className="text-xl font-bold mb-4">SOCIAL MEDIA</h3>
-              <div className="flex gap-4">
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label="Instagram"
-                >
-                  Instagram
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label="Facebook"
-                >
-                  Facebook
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors"
-                  aria-label="Twitter"
-                >
-                  Twitter
-                </a>
-              </div>
             </div>
           </div>
         </div>

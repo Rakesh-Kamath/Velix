@@ -61,77 +61,118 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
   };
 
   return (
-    <div className="border border-gray-300 dark:border-gray-700 rounded-lg p-6 mb-8">
-      <h3 className="text-xl font-bold mb-4">Write a Review</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Rating *</label>
-          <div className="flex gap-2">
+    <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg p-8 mb-8">
+      <div className="mb-6">
+        <h3 className="text-2xl font-bold mb-2">WRITE A REVIEW</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Share your experience with other shoppers</p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block mb-3 font-semibold text-sm">RATING *</label>
+          <div className="flex gap-3">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 type="button"
                 onClick={() => setRating(star)}
-                className={`text-3xl ${
+                className={`text-4xl transition-all transform hover:scale-110 ${
                   star <= rating
                     ? "text-yellow-400"
-                    : "text-gray-300 dark:text-gray-600"
-                } hover:text-yellow-400 transition-colors`}
+                    : "text-gray-300 dark:text-gray-700"
+                }`}
               >
                 ★
               </button>
             ))}
           </div>
+          {rating > 0 && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              {rating === 5 ? "Excellent!" : rating === 4 ? "Great!" : rating === 3 ? "Good" : rating === 2 ? "Fair" : "Poor"}
+            </p>
+          )}
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Size Purchased</label>
+        <div>
+          <label className="block mb-3 font-semibold text-sm">SIZE PURCHASED</label>
           <input
-            type="number"
+            type="text"
             value={sizePurchased}
             onChange={(e) => setSizePurchased(e.target.value)}
             placeholder="e.g., 10"
-            min="1"
-            max="20"
-            step="0.5"
-            className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-xl focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all"
           />
         </div>
 
         {sizePurchased && (
-          <div className="mb-4">
-            <label className="block mb-2 font-medium">True to Size?</label>
-            <select
-              value={trueToSize}
-              onChange={(e) => setTrueToSize(e.target.value)}
-              className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
-            >
-              <option value="">Select...</option>
-              <option value="runs small">Runs Small</option>
-              <option value="true to size">True to Size</option>
-              <option value="runs large">Runs Large</option>
-            </select>
+          <div>
+            <label className="block mb-3 font-semibold text-sm">TRUE TO SIZE?</label>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                type="button"
+                onClick={() => setTrueToSize("runs small")}
+                className={`py-3 px-4 rounded-xl font-medium transition-all ${
+                  trueToSize === "runs small"
+                    ? "bg-black dark:bg-white text-white dark:text-black"
+                    : "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800"
+                }`}
+              >
+                Runs Small
+              </button>
+              <button
+                type="button"
+                onClick={() => setTrueToSize("true to size")}
+                className={`py-3 px-4 rounded-xl font-medium transition-all ${
+                  trueToSize === "true to size"
+                    ? "bg-black dark:bg-white text-white dark:text-black"
+                    : "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800"
+                }`}
+              >
+                True to Size
+              </button>
+              <button
+                type="button"
+                onClick={() => setTrueToSize("runs large")}
+                className={`py-3 px-4 rounded-xl font-medium transition-all ${
+                  trueToSize === "runs large"
+                    ? "bg-black dark:bg-white text-white dark:text-black"
+                    : "bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800"
+                }`}
+              >
+                Runs Large
+              </button>
+            </div>
           </div>
         )}
 
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Your Review *</label>
+        <div>
+          <label className="block mb-3 font-semibold text-sm">YOUR REVIEW *</label>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Share your experience with this product..."
-            rows="5"
+            rows="6"
             required
-            className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-xl focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all resize-none"
           />
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+            {comment.length}/500 characters
+          </p>
         </div>
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-lg font-bold hover:opacity-80 transition-opacity disabled:opacity-50"
+          className="w-full py-4 bg-black dark:bg-white text-white dark:text-black rounded-xl font-bold text-lg hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
         >
-          {submitting ? "Submitting..." : "Submit Review"}
+          {submitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+              </svg>
+              Submitting...
+            </span>
+          ) : "Submit Review"}
         </button>
       </form>
     </div>
