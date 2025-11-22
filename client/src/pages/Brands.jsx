@@ -13,77 +13,73 @@ export default function Brands() {
       description: 'Just Do It - Leading sportswear and athletic footwear brand',
       category: 'footwear',
       products: '150+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=NIKE'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/nike-4-logo-png-transparent.png'
     },
     {
       name: 'Adidas',
       description: 'Impossible is Nothing - Performance and lifestyle footwear',
       category: 'footwear',
       products: '120+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=ADIDAS'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/adidas-logo-png-transparent.png'
     },
     {
       name: 'Puma',
       description: 'Forever Faster - Athletic and casual footwear',
       category: 'footwear',
       products: '80+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=PUMA'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/puma-logo-png-transparent.png'
     },
     {
       name: 'Reebok',
       description: 'Be More Human - Sports and lifestyle footwear',
       category: 'footwear',
       products: '60+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=REEBOK'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/reebok-logo-png-transparent.png'
     },
     {
       name: 'Converse',
       description: 'All Star - Iconic canvas sneakers and lifestyle footwear',
       category: 'footwear',
       products: '50+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=CONVERSE'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/converse-logo-png-transparent.png'
     },
     {
       name: 'New Balance',
       description: 'Fearlessly Independent - Premium running and lifestyle shoes',
       category: 'footwear',
       products: '70+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=NEW+BALANCE'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/new-balance-1-logo-png-transparent.png'
     },
     {
       name: 'Asics',
       description: 'Sound Mind, Sound Body - Performance running footwear',
       category: 'footwear',
       products: '45+ Products',
-      image: 'https://via.placeholder.com/400x200/000000/FFFFFF?text=ASICS'
+      logo: 'https://cdn.freebiesupply.com/logos/large/2x/asics-1-logo-png-transparent.png'
     },
     {
       name: 'Happy Socks',
       description: 'Colorful Design - Premium socks and accessories',
       category: 'accessories',
-      products: '30+ Products',
-      image: 'https://via.placeholder.com/400x200/FF6B6B/FFFFFF?text=HAPPY+SOCKS'
+      products: '30+ Products'
     },
     {
       name: 'Gaston Luga',
       description: 'Scandinavian Design - Premium bags and backpacks',
       category: 'accessories',
-      products: '25+ Products',
-      image: 'https://via.placeholder.com/400x200/4ECDC4/FFFFFF?text=GASTON+LUGA'
+      products: '25+ Products'
     },
     {
       name: 'FDMTL',
       description: 'Japanese Craftsmanship - Designer accessories',
       category: 'accessories',
-      products: '15+ Products',
-      image: 'https://via.placeholder.com/400x200/95E1D3/000000?text=FDMTL'
+      products: '15+ Products'
     },
     {
       name: 'MM6',
       description: 'Maison Margiela - Contemporary fashion accessories',
       category: 'accessories',
-      products: '20+ Products',
-      image: 'https://via.placeholder.com/400x200/F38181/FFFFFF?text=MM6'
+      products: '20+ Products'
     }
   ];
 
@@ -107,13 +103,15 @@ export default function Brands() {
           {footwearBrands.map((brand, index) => (
             <Link
               key={index}
-              to={`/products?brand=${encodeURIComponent(brand.name)}&category=footwear`}
+              to={`/products?category=footwear&brand=${encodeURIComponent(brand.name)}`}
               className="group border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
-              <div className="h-32 bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                <span className="text-3xl font-black text-gray-800 dark:text-gray-200">
-                  {brand.name.toUpperCase()}
-                </span>
+              <div className="h-40 bg-white dark:bg-zinc-900 flex items-center justify-center p-6">
+                <img 
+                  src={brand.logo} 
+                  alt={`${brand.name} logo`}
+                  className="max-h-full max-w-full object-contain dark:invert transition-opacity group-hover:opacity-80"
+                />
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 group-hover:underline">{brand.name}</h3>
@@ -139,13 +137,13 @@ export default function Brands() {
           {accessoryBrands.map((brand, index) => (
             <Link
               key={index}
-              to={`/products?brand=${encodeURIComponent(brand.name)}&category=accessories`}
+              to={`/products?category=accessories&brand=${encodeURIComponent(brand.name)}`}
               className="group border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
-              <div className="h-32 bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                <span className="text-3xl font-black text-gray-800 dark:text-gray-200">
-                  {brand.name.toUpperCase()}
-                </span>
+              <div className="h-40 bg-white dark:bg-zinc-900 flex items-center justify-center p-6">
+                <div className="text-4xl font-bold tracking-widest text-black dark:text-white uppercase">
+                  {brand.name}
+                </div>
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 group-hover:underline">{brand.name}</h3>

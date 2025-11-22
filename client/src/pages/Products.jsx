@@ -15,12 +15,13 @@ export default function Products() {
   const searchParam = searchParams.get('search') || '';
   const categoryParam = searchParams.get('category') || (searchParam ? '' : 'footwear');
   const saleParam = searchParams.get('sale') === 'true';
+  const brandParam = searchParams.get('brand') || '';
   const [category, setCategory] = useState(categoryParam);
   const [searchQuery, setSearchQuery] = useState(searchParam);
   const [showSaleOnly, setShowSaleOnly] = useState(saleParam);
   
   // Common filters
-  const [brand, setBrand] = useState('');
+  const [brand, setBrand] = useState(brandParam);
   const [gender, setGender] = useState('');
   const [priceRange, setPriceRange] = useState([0, 50000]);
   const [sortBy, setSortBy] = useState('');
@@ -40,11 +41,12 @@ export default function Products() {
     setCategory(categoryParam);
     setShowSaleOnly(saleParam);
     setSearchQuery(searchParam);
+    setBrand(brandParam);
     // Reset category-specific filters when category changes
     setShoeSize('');
     setSubcategory('');
     setProductType('');
-  }, [categoryParam, saleParam, searchParam]);
+  }, [categoryParam, saleParam, searchParam, brandParam]);
 
   // Close price dropdown when clicking outside
   useEffect(() => {

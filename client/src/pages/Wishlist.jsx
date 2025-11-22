@@ -116,7 +116,7 @@ export default function Wishlist() {
                     <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {product.brand}
                     </p>
-                    <p className="text-2xl font-bold mb-2">${product.price}</p>
+                    <p className="text-2xl font-bold mb-2">₹{product.price.toLocaleString('en-IN')}</p>
                     {product.rating > 0 && (
                       <div className="text-sm mb-2">
                         ⭐ {product.rating.toFixed(1)} ({product.numReviews})
