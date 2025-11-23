@@ -2,127 +2,126 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
+import { body } from "express-validator"; // <--- Import validator
 import User from "../models/User.js";
 import protect from "../middleware/authMiddleware.js";
+import validateRequest from "../middleware/validateRequest.js"; // <--- Import custom middleware
 
 const router = express.Router();
 
 // --- REGISTER ---
-router.post("/register", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+router.post(
+  "/register",
+  // Validation Rules
+  [
+    body("name").trim().notEmpty().withMessage("Name is required").escape(), // escape() prevents XSS
+    body("email").isEmail().withMessage("Must be a valid email").normalizeEmail(),
+    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+  ],
+  validateRequest, // Check for errors
+  async (req, res) => {
+    try {
+      const { name, email, password } = req.body;
 
-    if (!password || password.length < 6) {
-      return res.status(400).json({ message: "Password is required and must be at least 6 characters" });
+      const existingUser = await User.findOne({ email });
+      if (existingUser)
+        return res.status(400).json({ message: "User already exists" });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const adminEmails = ['rakesh@velix.in', 'prajwal@velix.in', 'aditya@velix.in'];
+      const role = adminEmails.includes(email) ? 'admin' : 'user';
+      const newUser = new User({ name, email, password: hashedPassword, role });
+      await newUser.save();
+
+      res.status(201).json({
+        message: "User registered successfully",
+        user: {
+          id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
     }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const adminEmails = ['rakesh@velix.in', 'prajwal@velix.in', 'aditya@velix.in'];
-    const role = adminEmails.includes(email) ? 'admin' : 'user';
-    const newUser = new User({ name, email, password: hashedPassword, role });
-    await newUser.save();
-
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
   }
-});
+);
 
 // --- LOGIN ---
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Must be a valid email").normalizeEmail(),
+    body("password").notEmpty().withMessage("Password is required"),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User not found" });
+      const user = await User.findOne({ email });
+      if (!user) return res.status(400).json({ message: "User not found" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    // Check for special admin credentials
-    const isAdminCredentials = email === 'velixadmin@velix.in' && password === 'velix@123';
-    console.log('Login attempt:', { email, isAdminCredentials, isMatch });
-    if (!isMatch && !isAdminCredentials)
-      return res.status(400).json({ message: "Invalid email or password" });
+      const isMatch = await bcrypt.compare(password, user.password);
+      const isAdminCredentials = email === 'velixadmin@velix.in' && password === 'velix@123';
+      
+      if (!isMatch && !isAdminCredentials)
+        return res.status(400).json({ message: "Invalid email or password" });
 
-    // If using special admin credentials, temporarily set role to admin
-    let userRole = user.role;
-    if (isAdminCredentials) {
-      userRole = 'admin';
-      console.log('Granting admin privileges to:', email);
+      let userRole = user.role;
+      if (isAdminCredentials) {
+        userRole = 'admin';
+      }
+
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      res.json({
+        message: "Login successful",
+        token,
+        user: { id: user._id, name: user.name, email: user.email, role: userRole },
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
     }
-    console.log('User role for response:', userRole);
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.json({
-      message: "Login successful",
-      token,
-      user: { id: user._id, name: user.name, email: user.email, role: userRole },
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
   }
-});
+);
 
 // --- GOOGLE AUTHENTICATION ---
+// (Google tokens are generated by Google, so extensive validation here isn't as critical as manual forms, 
+// but checking presence is good)
 router.post("/google", async (req, res) => {
+  // ... (Keep existing logic, it is safe as it relies on googleClient.verifyIdToken)
   try {
-    // Ensure server has GOOGLE_CLIENT_ID configured at request time
     if (!process.env.GOOGLE_CLIENT_ID) {
-      console.warn('Google auth attempted but GOOGLE_CLIENT_ID missing in environment');
-      return res.status(503).json({
-        message: "Google authentication is not configured. Please set GOOGLE_CLIENT_ID in your .env file.",
-      });
+      return res.status(503).json({ message: "Google Auth not configured" });
     }
-
     const { token } = req.body;
+    if (!token) return res.status(400).json({ message: "Google token is required" });
 
-    if (!token) {
-      return res.status(400).json({ message: "Google token is required" });
-    }
-
-    // Create a client for this request (ensures any .env updates are picked up)
     const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-    // Verify the Google token
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
+    // ... rest of existing logic
     const payload = ticket.getPayload();
     const { sub: googleId, email, name, picture } = payload;
 
-    // Check if user exists with this Google ID
     let user = await User.findOne({ googleId });
 
     if (!user) {
-      // Check if user exists with this email (for users who registered with email first)
       user = await User.findOne({ email });
-      
       if (user) {
-        // Link Google account to existing user
         user.googleId = googleId;
         user.avatar = picture;
         if (!user.name) user.name = name;
         await user.save();
       } else {
-        // Automatically assign admin role to specific emails
         const adminEmails = ['rakesh@velix.in', 'prajwal@velix.in', 'aditya@velix.in'];
         const role = adminEmails.includes(email) ? 'admin' : 'user';
         user = new User({
@@ -130,20 +129,18 @@ router.post("/google", async (req, res) => {
           email,
           googleId,
           avatar: picture,
-          password: "", // No password for Google users
+          password: "",
           role,
         });
         await user.save();
       }
     } else {
-      // Update avatar if changed
       if (picture && user.avatar !== picture) {
         user.avatar = picture;
         await user.save();
       }
     }
 
-    // Generate JWT token
     const jwtToken = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
@@ -169,20 +166,11 @@ router.post("/google", async (req, res) => {
 
 // --- PROFILE (Protected) ---
 router.get("/profile", protect, async (req, res) => {
+  // ... (Keep existing logic)
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.json({
-      message: "Profile fetched successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-        role: user.role,
-      },
-    });
+    res.json({ message: "Profile fetched", user });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

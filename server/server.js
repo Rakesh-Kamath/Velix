@@ -2,6 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import mongoSanitize from "express-mongo-sanitize";
 
 // --- Import Local Files ---
 import connectDB from "./config/db.js";
@@ -21,6 +22,21 @@ const app = express();
 // --- Middleware ---
 app.use(cors());
 app.use(express.json()); // allows parsing of JSON requests
+
+// --- Security Fix for Express 5 ---
+// This allows express-mongo-sanitize to modify req.query
+app.use((req, res, next) => {
+  Object.defineProperty(req, 'query', {
+    value: req.query,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  });
+  next();
+});
+
+// --- Mount Sanitization Middleware ---
+app.use(mongoSanitize());
 
 // --- Mount Routes ---
 app.use("/api/auth", authRoutes);
