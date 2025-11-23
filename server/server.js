@@ -53,6 +53,7 @@ app.get("/", (req, res) => {
 
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📱 Mobile access: http://192.168.0.103:${PORT}`);
 });

@@ -196,6 +196,7 @@ export default function ProductForm() {
               {formData.category === 'footwear' ? (
                 <>
                   <option value="Nike">Nike</option>
+                  <option value="Adidas">Adidas</option>
                   <option value="Puma">Puma</option>
                   <option value="Reebok">Reebok</option>
                   <option value="Converse">Converse</option>

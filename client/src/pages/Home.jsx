@@ -132,11 +132,16 @@ export default function Home() {
       if (size) params.size = size;
       if (sort) params.sort = sort;
 
+      console.log('Fetching products with params:', params);
       const res = await api.get("/products", { params });
+      console.log('Products response:', res.data);
       const fetchedProducts = res.data.products || res.data || [];
+      console.log('Fetched products count:', fetchedProducts.length);
       setProducts(Array.isArray(fetchedProducts) ? fetchedProducts : []);
     } catch (error) {
       console.error("Error fetching products:", error);
+      console.error("Error details:", error.response?.data);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -144,33 +149,52 @@ export default function Home() {
 
   const fetchNewArrivals = async () => {
     try {
-      const params = { sort: "newest", limit: 10 };
+      const params = { sort: "newest" };
       if (newArrivalTab === "footwear") {
         params.category = "footwear";
       } else if (newArrivalTab === "accessories") {
         params.category = "accessories";
       }
+      console.log('Fetching new arrivals with params:', params);
       const res = await api.get("/products", { params });
+      console.log('New arrivals response:', res.data);
       const fetchedProducts = res.data.products || res.data || [];
-      setNewArrivals(Array.isArray(fetchedProducts) ? fetchedProducts : []);
+      const limitedProducts = Array.isArray(fetchedProducts) ? fetchedProducts.slice(0, 10) : [];
+      console.log('New arrivals count:', limitedProducts.length);
+      setNewArrivals(limitedProducts);
     } catch (error) {
       console.error("Error fetching new arrivals:", error);
+      console.error("Error details:", error.response?.data);
+      setNewArrivals([]);
     }
   };
 
   const fetchTrending = async () => {
     try {
-      const params = { sort: "popularity", limit: 10 };
+      const params = {};
       if (trendingTab === "men") {
         params.gender = "men";
       } else if (trendingTab === "women") {
         params.gender = "women";
       }
+      console.log('Fetching trending with params:', params);
       const res = await api.get("/products", { params });
+      console.log('Trending response:', res.data);
       const fetchedProducts = res.data.products || res.data || [];
-      setTrending(Array.isArray(fetchedProducts) ? fetchedProducts : []);
+      // Sort by rating and numReviews for popularity
+      const sortedProducts = Array.isArray(fetchedProducts) 
+        ? fetchedProducts.sort((a, b) => {
+            const scoreA = (a.rating || 0) * (a.numReviews || 0);
+            const scoreB = (b.rating || 0) * (b.numReviews || 0);
+            return scoreB - scoreA;
+          }).slice(0, 10)
+        : [];
+      console.log('Trending count:', sortedProducts.length);
+      setTrending(sortedProducts);
     } catch (error) {
       console.error("Error fetching trending:", error);
+      console.error("Error details:", error.response?.data);
+      setTrending([]);
     }
   };
 
@@ -368,20 +392,25 @@ export default function Home() {
           <div className="relative -mx-2 sm:mx-0">
             <div
               ref={newArrivalScrollRef}
-              className="flex gap-3 sm:gap-4 overflow-x-scroll px-2 sm:px-0 pb-4"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex gap-3 sm:gap-4 overflow-x-auto px-2 sm:px-0 pb-4"
+              style={{ 
+                scrollbarWidth: "thin",
+                WebkitOverflowScrolling: "touch"
+              }}
             >
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="flex-shrink-0 w-[280px]">
+                  <div key={i} className="flex-shrink-0 w-[240px] sm:w-[280px]">
                     <ProductCardSkeleton />
                   </div>
                 ))
               ) : newArrivals.length === 0 ? (
-                <div className="w-full text-center py-8 text-gray-500">No new arrivals</div>
+                <div className="w-full min-h-[300px] flex items-center justify-center text-center py-8 text-gray-500 dark:text-gray-400">
+                  No new arrivals
+                </div>
               ) : (
                 newArrivals.map((product) => (
-                  <div key={product._id} className="flex-shrink-0 w-[280px]">
+                  <div key={product._id} className="flex-shrink-0 w-[240px] sm:w-[280px]">
                     <ProductCard product={product} />
                   </div>
                 ))
@@ -438,20 +467,25 @@ export default function Home() {
           <div className="relative -mx-2 sm:mx-0">
             <div
               ref={trendingScrollRef}
-              className="flex gap-3 sm:gap-4 overflow-x-scroll px-2 sm:px-0 pb-4"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex gap-3 sm:gap-4 overflow-x-auto px-2 sm:px-0 pb-4"
+              style={{ 
+                scrollbarWidth: "thin",
+                WebkitOverflowScrolling: "touch"
+              }}
             >
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="flex-shrink-0 w-[280px]">
+                  <div key={i} className="flex-shrink-0 w-[240px] sm:w-[280px]">
                     <ProductCardSkeleton />
                   </div>
                 ))
               ) : trending.length === 0 ? (
-                <div className="w-full text-center py-8 text-gray-500">No trending products</div>
+                <div className="w-full min-h-[300px] flex items-center justify-center text-center py-8 text-gray-500 dark:text-gray-400">
+                  No trending products
+                </div>
               ) : (
                 trending.map((product) => (
-                  <div key={product._id} className="flex-shrink-0 w-[280px]">
+                  <div key={product._id} className="flex-shrink-0 w-[240px] sm:w-[280px]">
                     <ProductCard product={product} />
                   </div>
                 ))
