@@ -120,7 +120,7 @@ productSchema.pre('validate', function(next) {
   }
   
   // Brand validation based on category
-  const footwearBrands = ['Nike', 'Puma', 'Reebok', 'Converse', 'Asics', 'New Balance'];
+  const footwearBrands = ['Nike', 'Adidas', 'Puma', 'Reebok', 'Converse', 'Asics', 'New Balance'];
   const accessoryBrands = ['Adidas', 'FDMTL', 'Gaston Luga', 'Happy Socks', 'MM6', 'Nike'];
   
   if (this.category === 'footwear' && !footwearBrands.includes(this.brand)) {
