@@ -113,9 +113,15 @@ export default function TermsConditions() {
             For questions about these Terms and Conditions, please contact us at:
           </p>
           <p className="mt-4">
-            <strong>Email:</strong> legal@velix.in<br />
-            <strong>Phone:</strong> +91 1800-XXX-XXXX<br />
-            <strong>Address:</strong> Velix Sneakers, [Address], India
+            <strong>Email:</strong><br />
+            nnm23cb004@nmamit.in<br />
+            nnm23cb013@nmamit.in<br />
+            nnm23cb038@nmamit.in<br />
+            <strong>Address:</strong><br />
+            NMAM Institute of Technology<br />
+            Nitte, Karkala Taluk<br />
+            Udupi District, Karnataka 574110<br />
+            India
           </p>
         </section>
       </div>

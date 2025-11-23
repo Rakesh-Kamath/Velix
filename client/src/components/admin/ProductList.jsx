@@ -53,8 +53,8 @@ export default function ProductList() {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+    <div className="overflow-x-auto w-full">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 w-full">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -82,7 +82,7 @@ export default function ProductList() {
                   <div className="flex-shrink-0 h-10 w-10">
                     <img
                       className="h-10 w-10 rounded-md object-cover"
-                      src={product.image}
+                      src={product.images?.[0] || product.image || 'https://via.placeholder.com/150'}
                       alt={product.name}
                     />
                   </div>

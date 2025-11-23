@@ -45,7 +45,7 @@ export default function ReturnExchange() {
           <h2 className="text-2xl font-bold mb-4">How to Initiate a Return</h2>
           <ol className="list-decimal list-inside space-y-3">
             <li>
-              <strong>Contact Us:</strong> Email support@velix.in with your order number and reason for return
+              <strong>Contact Us:</strong> Email nnm23cb004@nmamit.in with your order number and reason for return
             </li>
             <li>
               <strong>Receive Authorization:</strong> We'll send you a Return Authorization (RA) number and instructions
@@ -94,8 +94,10 @@ export default function ReturnExchange() {
             If you have questions about returns or exchanges, our customer service team is here to help.
           </p>
           <p>
-            <strong>Email:</strong> support@velix.in<br />
-            <strong>Phone:</strong> +91 1800-XXX-XXXX
+            <strong>Email:</strong><br />
+            nnm23cb004@nmamit.in<br />
+            nnm23cb013@nmamit.in<br />
+            nnm23cb038@nmamit.in
           </p>
         </section>
       </div>

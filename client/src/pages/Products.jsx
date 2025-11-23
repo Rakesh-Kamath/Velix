@@ -13,7 +13,8 @@ export default function Products() {
   const [showPriceDropdown, setShowPriceDropdown] = useState(false);
   
   const searchParam = searchParams.get('search') || '';
-  const categoryParam = searchParams.get('category') || (searchParam ? '' : 'footwear');
+  const sortParam = searchParams.get('sort') || '';
+  const categoryParam = searchParams.get('category') || (searchParam || sortParam ? '' : 'footwear');
   const saleParam = searchParams.get('sale') === 'true';
   const brandParam = searchParams.get('brand') || '';
   const [category, setCategory] = useState(categoryParam);
@@ -24,7 +25,7 @@ export default function Products() {
   const [brand, setBrand] = useState(brandParam);
   const [gender, setGender] = useState('');
   const [priceRange, setPriceRange] = useState([0, 50000]);
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState(sortParam);
   
   // Footwear specific
   const [shoeSize, setShoeSize] = useState('');
@@ -42,11 +43,12 @@ export default function Products() {
     setShowSaleOnly(saleParam);
     setSearchQuery(searchParam);
     setBrand(brandParam);
+    setSortBy(sortParam);
     // Reset category-specific filters when category changes
     setShoeSize('');
     setSubcategory('');
     setProductType('');
-  }, [categoryParam, saleParam, searchParam, brandParam]);
+  }, [categoryParam, saleParam, searchParam, brandParam, sortParam]);
 
   // Close price dropdown when clicking outside
   useEffect(() => {
@@ -107,8 +109,19 @@ export default function Products() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-4xl font-bold mb-8">
-        {searchQuery ? `Search Results for "${searchQuery}"` : showSaleOnly ? 'Sale Items' : category === 'footwear' ? 'FOOTWEAR FOR MEN AND WOMEN' : category === 'accessories' ? 'ACCESSORIES FOR MEN AND WOMEN' : 'All Products'}
+        {searchQuery ? `Search Results for "${searchQuery}"` : 
+         showSaleOnly ? 'Sale Items' : 
+         brand && !category ? `${brand.toUpperCase()} COLLECTION` :
+         sortBy === 'newest' && !category ? 'NEW ARRIVALS' :
+         category === 'footwear' ? 'FOOTWEAR FOR MEN AND WOMEN' : 
+         category === 'accessories' ? 'ACCESSORIES FOR MEN AND WOMEN' : 
+         'All Products'}
       </h1>
+      {brand && !category && (
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Showing all {brand} products - footwear and accessories
+        </p>
+      )}
 
       {/* Filters & Sort */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
@@ -205,6 +218,7 @@ export default function Products() {
                 </>
               ) : (
                 <>
+                  <option value="Adidas">Adidas</option>
                   <option value="Nike">Nike</option>
                   <option value="Puma">Puma</option>
                   <option value="Reebok">Reebok</option>

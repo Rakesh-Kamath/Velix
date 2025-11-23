@@ -95,7 +95,12 @@ export default function FAQ() {
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Our customer support team is here to help you.
         </p>
-        <p className="font-bold">Contact us at: support@velix.in</p>
+        <p className="font-bold">Contact us at:</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          nnm23cb004@nmamit.in<br />
+          nnm23cb013@nmamit.in<br />
+          nnm23cb038@nmamit.in
+        </p>
       </div>
     </div>
     <Footer />

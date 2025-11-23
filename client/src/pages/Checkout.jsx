@@ -17,6 +17,13 @@ export default function Checkout() {
   });
   const [paymentMethod, setPaymentMethod] = useState("razorpay");
   const [loadingRazorpay, setLoadingRazorpay] = useState(false);
+  const [cardDetails, setCardDetails] = useState({
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    nameOnCard: "",
+  });
+  const [paypalEmail, setPaypalEmail] = useState("");
 
   const subtotal = getCartTotal();
   const shipping = 0;
@@ -129,23 +136,79 @@ export default function Checkout() {
       return;
     }
 
-    // Handle other payment methods (existing code)
-    try {
-      const order = {
-        orderItems,
-        shippingAddress,
-        paymentMethod,
-        itemsPrice: subtotal,
-        taxPrice: tax,
-        shippingPrice: shipping,
-        totalPrice: total,
-      };
+    // Handle Credit Card payment
+    if (paymentMethod === "card") {
+      // Validate card details
+      if (!cardDetails.cardNumber || !cardDetails.expiryDate || !cardDetails.cvv || !cardDetails.nameOnCard) {
+        alert("Please fill in all credit card details");
+        return;
+      }
+      
+      // Basic card number validation (should be 13-19 digits)
+      const cardNumber = cardDetails.cardNumber.replace(/\s/g, "");
+      if (!/^\d{13,19}$/.test(cardNumber)) {
+        alert("Please enter a valid card number");
+        return;
+      }
+      
+      // Validate expiry date (MM/YY format)
+      if (!/^\d{2}\/\d{2}$/.test(cardDetails.expiryDate)) {
+        alert("Please enter expiry date in MM/YY format");
+        return;
+      }
+      
+      // Validate CVV (3-4 digits)
+      if (!/^\d{3,4}$/.test(cardDetails.cvv)) {
+        alert("Please enter a valid CVV");
+        return;
+      }
+      
+      // In a real application, you would process the card payment through a payment gateway here
+      // For now, we'll create the order with payment info (but not actually charge the card)
+      alert("Credit Card payment processing is not fully integrated. Please use Razorpay for secure payments.");
+      return;
+    }
 
-      const res = await api.post("/orders", order);
-      clearCart();
-      navigate(`/order/${res.data._id}`);
-    } catch (error) {
-      alert(error.response?.data?.message || "Error placing order");
+    // Handle PayPal payment
+    if (paymentMethod === "paypal") {
+      // Validate PayPal email
+      if (!paypalEmail) {
+        alert("Please enter your PayPal email address");
+        return;
+      }
+      
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(paypalEmail)) {
+        alert("Please enter a valid email address");
+        return;
+      }
+      
+      // In a real application, you would redirect to PayPal or process through PayPal API here
+      alert("PayPal payment processing is not fully integrated. Please use Razorpay for secure payments.");
+      return;
+    }
+
+    // Handle Cash on Delivery (no payment info needed upfront)
+    if (paymentMethod === "cash") {
+      try {
+        const order = {
+          orderItems,
+          shippingAddress,
+          paymentMethod,
+          itemsPrice: subtotal,
+          taxPrice: tax,
+          shippingPrice: shipping,
+          totalPrice: total,
+        };
+
+        const res = await api.post("/orders", order);
+        clearCart();
+        navigate(`/order/${res.data._id}`);
+      } catch (error) {
+        alert(error.response?.data?.message || "Error placing order");
+      }
+      return;
     }
   };
 
@@ -222,7 +285,7 @@ export default function Checkout() {
 
           <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-xl shadow-md p-6">
             <h2 className="text-2xl font-bold mb-6">Payment Method</h2>
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="radio"
@@ -264,6 +327,113 @@ export default function Checkout() {
                 <span className="text-lg">Cash on Delivery</span>
               </label>
             </div>
+
+            {/* Credit Card Payment Details */}
+            {paymentMethod === "card" && (
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-700">
+                <h3 className="text-lg font-semibold mb-4">Credit Card Details</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Name on Card</label>
+                    <input
+                      type="text"
+                      placeholder="John Doe"
+                      value={cardDetails.nameOnCard}
+                      onChange={(e) =>
+                        setCardDetails({ ...cardDetails, nameOnCard: e.target.value })
+                      }
+                      className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Card Number</label>
+                    <input
+                      type="text"
+                      placeholder="1234 5678 9012 3456"
+                      value={cardDetails.cardNumber}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\s/g, "");
+                        if (value.length <= 16) {
+                          value = value.match(/.{1,4}/g)?.join(" ") || value;
+                          setCardDetails({ ...cardDetails, cardNumber: value });
+                        }
+                      }}
+                      maxLength={19}
+                      className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Expiry Date</label>
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        value={cardDetails.expiryDate}
+                        onChange={(e) => {
+                          let value = e.target.value.replace(/\D/g, "");
+                          if (value.length <= 4) {
+                            if (value.length >= 2) {
+                              value = value.slice(0, 2) + "/" + value.slice(2);
+                            }
+                            setCardDetails({ ...cardDetails, expiryDate: value });
+                          }
+                        }}
+                        maxLength={5}
+                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">CVV</label>
+                      <input
+                        type="text"
+                        placeholder="123"
+                        value={cardDetails.cvv}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "").slice(0, 4);
+                          setCardDetails({ ...cardDetails, cvv: value });
+                        }}
+                        maxLength={4}
+                        className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* PayPal Payment Details */}
+            {paymentMethod === "paypal" && (
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-700">
+                <h3 className="text-lg font-semibold mb-4">PayPal Details</h3>
+                <div>
+                  <label className="block text-sm font-medium mb-2">PayPal Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={paypalEmail}
+                    onChange={(e) => setPaypalEmail(e.target.value)}
+                    className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-black rounded-lg focus:outline-none focus:border-black dark:focus:border-white transition-colors"
+                    required
+                  />
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    You will be redirected to PayPal to complete your payment
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Cash on Delivery Info */}
+            {paymentMethod === "cash" && (
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Payment will be collected when your order is delivered. No payment information is required at this time.
+                </p>
+              </div>
+            )}
           </div>
 
           <button

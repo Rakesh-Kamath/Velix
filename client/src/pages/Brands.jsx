@@ -1,85 +1,97 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
+import api from '../api/axios';
 
 export default function Brands() {
+  const [brandCounts, setBrandCounts] = useState({});
+  
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchBrandCounts();
   }, []);
+
+  const fetchBrandCounts = async () => {
+    try {
+      const res = await api.get('/products');
+      const products = res.data.products || res.data || [];
+      
+      // Count products by brand
+      const counts = {};
+      products.forEach(product => {
+        if (product.brand) {
+          counts[product.brand] = (counts[product.brand] || 0) + 1;
+        }
+      });
+      
+      setBrandCounts(counts);
+    } catch (error) {
+      console.error('Error fetching brand counts:', error);
+    }
+  };
 
   const brands = [
     {
       name: 'Nike',
       description: 'Just Do It - Leading sportswear and athletic footwear brand',
       category: 'footwear',
-      products: '150+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/nike-4-logo-png-transparent.png'
     },
     {
       name: 'Adidas',
       description: 'Impossible is Nothing - Performance and lifestyle footwear',
       category: 'footwear',
-      products: '120+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/adidas-logo-png-transparent.png'
     },
     {
       name: 'Puma',
       description: 'Forever Faster - Athletic and casual footwear',
       category: 'footwear',
-      products: '80+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/puma-logo-png-transparent.png'
     },
     {
       name: 'Reebok',
       description: 'Be More Human - Sports and lifestyle footwear',
       category: 'footwear',
-      products: '60+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/reebok-logo-png-transparent.png'
     },
     {
       name: 'Converse',
       description: 'All Star - Iconic canvas sneakers and lifestyle footwear',
       category: 'footwear',
-      products: '50+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/converse-logo-png-transparent.png'
     },
     {
       name: 'New Balance',
       description: 'Fearlessly Independent - Premium running and lifestyle shoes',
       category: 'footwear',
-      products: '70+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/new-balance-1-logo-png-transparent.png'
     },
     {
       name: 'Asics',
       description: 'Sound Mind, Sound Body - Performance running footwear',
       category: 'footwear',
-      products: '45+ Products',
       logo: 'https://cdn.freebiesupply.com/logos/large/2x/asics-1-logo-png-transparent.png'
     },
     {
       name: 'Happy Socks',
       description: 'Colorful Design - Premium socks and accessories',
-      category: 'accessories',
-      products: '30+ Products'
+      category: 'accessories'
     },
     {
       name: 'Gaston Luga',
       description: 'Scandinavian Design - Premium bags and backpacks',
-      category: 'accessories',
-      products: '25+ Products'
+      category: 'accessories'
     },
     {
       name: 'FDMTL',
       description: 'Japanese Craftsmanship - Designer accessories',
-      category: 'accessories',
-      products: '15+ Products'
+      category: 'accessories'
     },
     {
       name: 'MM6',
       description: 'Maison Margiela - Contemporary fashion accessories',
-      category: 'accessories',
-      products: '20+ Products'
+      category: 'accessories'
     }
   ];
 
@@ -118,7 +130,7 @@ export default function Brands() {
                 <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{brand.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                    {brand.products}
+                    {brandCounts[brand.name] || 0} {brandCounts[brand.name] === 1 ? 'Product' : 'Products'}
                   </span>
                   <span className="text-sm font-semibold group-hover:underline">
                     Shop Now →
@@ -150,7 +162,7 @@ export default function Brands() {
                 <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{brand.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                    {brand.products}
+                    {brandCounts[brand.name] || 0} {brandCounts[brand.name] === 1 ? 'Product' : 'Products'}
                   </span>
                   <span className="text-sm font-semibold group-hover:underline">
                     Shop Now →

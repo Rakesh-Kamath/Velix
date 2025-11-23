@@ -15,11 +15,11 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
       {/* Header */}
-      <header className="bg-white dark:bg-black shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
+      <header className="bg-white dark:bg-black shadow w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
             </div>
@@ -38,8 +38,8 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="flex flex-col md:flex-row gap-8 w-full">
           {/* Sidebar */}
           <div className="md:w-64 flex-shrink-0">
             <nav className="bg-white dark:bg-black rounded-lg shadow p-4">
@@ -73,15 +73,15 @@ export default function AdminDashboard() {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1">
-            <div className="bg-white dark:bg-black rounded-lg shadow p-6">
+          <div className="flex-1 min-w-0">
+            <div className="bg-white dark:bg-black rounded-lg shadow p-6 w-full">
               {activeTab === 'products' && (
-                <div>
+                <div className="w-full">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Product Management</h2>
                     <Link
                       to="/admin/products/new"
-                      className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
                     >
                       Add New Product
                     </Link>
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
               )}
 
               {activeTab === 'orders' && (
-                <div>
+                <div className="w-full">
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Order Management</h2>
                   <OrderList />
                 </div>

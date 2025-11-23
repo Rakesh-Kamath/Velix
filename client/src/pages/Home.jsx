@@ -41,10 +41,10 @@ export default function Home() {
       type: "video",
       videoUrl: "/videos/hero1.mp4",
       cta: "Shop New Arrivals",
-      link: "/products?category=footwear",
+      link: "/products?sort=newest",
     },
     {
-      title: "Summer Sale",
+      title: "Black Friday Sale",
       subtitle: "Up to 40% Off Selected Items",
       description: "Limited time offer on premium sneakers",
       type: "video",
@@ -53,13 +53,13 @@ export default function Home() {
       link: "/products?sale=true",
     },
     {
-      title: "Exclusive Drops",
-      subtitle: "Limited Edition Releases",
-      description: "Get your hands on rare and exclusive designs",
+      title: "Adidas Originals",
+      subtitle: "Limited Edition Collection",
+      description: "Explore exclusive Adidas footwear and accessories",
       type: "video",
       videoUrl: "/videos/hero3.mp4",
-      cta: "Explore Exclusives",
-      link: "/products?subcategory=lifestyle",
+      cta: "Explore Adidas",
+      link: "/products?brand=Adidas",
     },
   ];
 
@@ -282,9 +282,14 @@ export default function Home() {
                 <p className="text-sm sm:text-base md:text-lg lg:text-xl opacity-80 mb-4 sm:mb-6 md:mb-8">{slide.description}</p>
                 <Link
                   to={slide.link}
-                  className="px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-white dark:bg-white text-black dark:text-black rounded-lg text-sm sm:text-base md:text-lg font-bold hover:bg-gray-100 dark:hover:bg-gray-100 transition-all inline-block shadow-lg"
+                  className="group relative px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-3.5 text-sm sm:text-base md:text-lg font-semibold text-white bg-transparent border-2 border-white/90 rounded-full overflow-hidden transition-all duration-300 inline-block hover:scale-[1.02] hover:border-white hover:shadow-xl hover:bg-white/5"
                 >
-                  {slide.cta}
+                  <span className="relative z-10 flex items-center gap-2">
+                    {slide.cta}
+                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
                 </Link>
               </div>
             </div>

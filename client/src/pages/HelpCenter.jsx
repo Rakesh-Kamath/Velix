@@ -55,8 +55,12 @@ export default function HelpCenter() {
             Can't find what you're looking for? Our customer support team is here to help.
           </p>
           <div className="space-y-3">
-            <p><strong>Email:</strong> support@velix.in</p>
-            <p><strong>Phone:</strong> +91 1800-XXX-XXXX</p>
+            <p><strong>Email:</strong></p>
+            <p className="ml-4">
+              nnm23cb004@nmamit.in<br />
+              nnm23cb013@nmamit.in<br />
+              nnm23cb038@nmamit.in
+            </p>
             <p><strong>Hours:</strong> Monday - Saturday, 9:00 AM - 6:00 PM IST</p>
           </div>
         </section>

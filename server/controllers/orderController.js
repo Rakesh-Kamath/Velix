@@ -286,6 +286,13 @@ export const updateOrderToDelivered = async (req, res) => {
     if (order) {
       order.isDelivered = true;
       order.deliveredAt = Date.now();
+      
+      // Automatically mark as paid when delivered
+      if (!order.isPaid) {
+        order.isPaid = true;
+        order.paidAt = Date.now();
+      }
+      
       const updatedOrder = await order.save();
       res.json(updatedOrder);
     } else {

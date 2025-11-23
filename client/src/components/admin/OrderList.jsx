@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
+import toast from 'react-hot-toast';
 
 export default function OrderList() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchOrders();
@@ -20,6 +23,19 @@ export default function OrderList() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMarkDelivered = async (orderId) => {
+    if (window.confirm('Are you sure you want to mark this order as delivered?')) {
+      try {
+        await api.put(`/orders/${orderId}/deliver`);
+        toast.success('Order marked as delivered successfully');
+        fetchOrders(); // Refresh the list
+      } catch (err) {
+        toast.error('Failed to update order status: ' + (err.response?.data?.message || err.message));
+        console.error(err);
+      }
     }
   };
 
@@ -40,8 +56,8 @@ export default function OrderList() {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+    <div className="overflow-x-auto w-full">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 w-full">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -91,14 +107,14 @@ export default function OrderList() {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button
-                  onClick={() => {/* View order details */}}
+                  onClick={() => navigate(`/admin/orders/${order._id}`)}
                   className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-4"
                 >
                   View
                 </button>
                 {!order.isDelivered && (
                   <button
-                    onClick={() => {/* Mark as delivered */}}
+                    onClick={() => handleMarkDelivered(order._id)}
                     className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
                   >
                     Mark Delivered

@@ -132,8 +132,10 @@ export default function OrderShipping() {
             Our customer service team is ready to assist you with any shipping or order-related questions.
           </p>
           <p>
-            <strong>Email:</strong> support@velix.in<br />
-            <strong>Phone:</strong> +91 1800-XXX-XXXX<br />
+            <strong>Email:</strong><br />
+            nnm23cb004@nmamit.in<br />
+            nnm23cb013@nmamit.in<br />
+            nnm23cb038@nmamit.in<br />
             <strong>Hours:</strong> Monday - Saturday, 9:00 AM - 6:00 PM IST
           </p>
         </section>

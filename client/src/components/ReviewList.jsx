@@ -41,6 +41,20 @@ export default function ReviewList({ productId }) {
     }
   };
 
+  const handleDelete = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) {
+      return;
+    }
+    try {
+      await api.delete(`/reviews/${reviewId}`);
+      setReviews(reviews.filter((r) => r._id !== reviewId));
+      alert("Review deleted successfully");
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      alert(error.response?.data?.message || "Error deleting review");
+    }
+  };
+
   if (loading) {
     return <div className="text-center py-8">Loading reviews...</div>;
   }
@@ -103,6 +117,14 @@ export default function ReviewList({ productId }) {
                     {new Date(review.createdAt).toLocaleDateString()}
                   </p>
                 </div>
+                {user && review.user?._id === user.id && (
+                  <button
+                    onClick={() => handleDelete(review._id)}
+                    className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 {review.comment}

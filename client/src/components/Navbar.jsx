@@ -71,14 +71,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-transparent dark:bg-transparent border-b border-gray-300/30 dark:border-gray-700/30 py-2 sm:py-4 backdrop-blur-md sticky top-0 z-50 transition-colors">
+    <nav className="bg-black/80 backdrop-blur-md border-b border-gray-700/30 py-2 sm:py-4 sticky top-0 z-50">
       <div className="w-full px-3 sm:px-6 md:px-12 flex justify-between items-center relative">
         {/* Left Side - Hamburger and Logo */}
         <div className="flex items-center gap-2 z-10">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors"
             aria-label="Menu"
           >
             <svg className="w-6 h-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -192,7 +192,7 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={() => setShowSearch(true)}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-800 transition-colors text-white"
                   aria-label="Search"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +206,7 @@ export default function Navbar() {
           {/* Wishlist Icon */}
           <Link
             to="/wishlist"
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors relative"
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors relative text-white"
             aria-label="Wishlist"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,7 +224,7 @@ export default function Navbar() {
             <div className="relative group">
               <Link
                 to="/profile"
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors flex items-center"
+                className="p-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center text-white"
                 aria-label="Profile"
               >
                 {user.avatar ? (
@@ -240,24 +240,24 @@ export default function Navbar() {
                 )}
               </Link>
               {/* Dropdown menu on hover */}
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <div className="absolute right-0 mt-2 w-48 bg-black border border-gray-700 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                 <Link
                   to="/profile"
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-t-lg"
+                  className="block px-4 py-2 text-white hover:bg-gray-800 rounded-t-lg"
                 >
                   Profile
                 </Link>
                 {user.role === 'admin' && (
                   <Link
                     to="/admin"
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900"
+                    className="block px-4 py-2 text-white hover:bg-gray-800"
                   >
                     Admin Dashboard
                   </Link>
                 )}
                 <button
                   onClick={logout}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-b-lg"
+                  className="w-full text-left px-4 py-2 text-white hover:bg-gray-800 rounded-b-lg"
                 >
                   Logout
                 </button>
@@ -266,7 +266,7 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-800 transition-colors text-white"
               aria-label="Login"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +278,7 @@ export default function Navbar() {
           {/* Cart Icon */}
           <Link
             to="/cart"
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors relative"
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors relative text-white"
             aria-label="Cart"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,7 +294,7 @@ export default function Navbar() {
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors text-white"
             aria-label="Toggle theme"
           >
             {darkMode ? (
@@ -312,33 +312,33 @@ export default function Navbar() {
 
       {/* Mobile Menu Dropdown */}
       {showMobileMenu && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-black border-b border-gray-300 dark:border-gray-700 shadow-lg">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-black border-b border-gray-700 shadow-lg">
           <div className="flex flex-col">
             <Link
               to="/"
               onClick={() => setShowMobileMenu(false)}
-              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border-b border-gray-200 dark:border-gray-800"
+              className="px-6 py-4 text-base font-semibold text-white hover:bg-gray-800 transition-colors border-b border-gray-700"
             >
               NEW ARRIVAL
             </Link>
             <Link
               to="/products?category=footwear"
               onClick={() => setShowMobileMenu(false)}
-              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border-b border-gray-200 dark:border-gray-800"
+              className="px-6 py-4 text-base font-semibold text-white hover:bg-gray-800 transition-colors border-b border-gray-700"
             >
               FOOTWEAR
             </Link>
             <Link
               to="/products?category=accessories"
               onClick={() => setShowMobileMenu(false)}
-              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border-b border-gray-200 dark:border-gray-800"
+              className="px-6 py-4 text-base font-semibold text-white hover:bg-gray-800 transition-colors border-b border-gray-700"
             >
               ACCESSORIES
             </Link>
             <Link
               to="/products?sale=true"
               onClick={() => setShowMobileMenu(false)}
-              className="px-6 py-4 text-base font-semibold hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+              className="px-6 py-4 text-base font-semibold text-white hover:bg-gray-800 transition-colors"
             >
               SALES
             </Link>

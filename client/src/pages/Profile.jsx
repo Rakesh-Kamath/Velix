@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 import api from "../api/axios";
 import Footer from "../components/Footer";
 
 export default function Profile() {
   const { user, logout } = useAuth();
+  const { wishlist, removeFromWishlist, loading: wishlistLoading } = useWishlist();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +54,16 @@ export default function Profile() {
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  const handleMoveToCart = (product) => {
+    const availableSize = product.sizes.find((s) => s.stock > 0);
+    if (availableSize) {
+      addToCart(product, availableSize.size, 1);
+      alert("Added to cart!");
+    } else {
+      alert("This product is out of stock");
+    }
   };
 
   const getOrderStats = () => {
@@ -222,18 +236,19 @@ export default function Profile() {
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <span
-                              className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
-                                order.isPaid
-                                  ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
-                                  : "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
-                              }`}
-                            >
-                              {order.isPaid ? "✓ Paid" : "Pending Payment"}
-                            </span>
-                            {order.isDelivered && (
-                              <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                                ✓ Delivered
+                            {order.isDelivered ? (
+                              <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                ✓ Delivered & Paid
+                              </span>
+                            ) : (
+                              <span
+                                className={`px-4 py-1.5 rounded-full text-xs font-semibold ${
+                                  order.isPaid
+                                    ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
+                                    : "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
+                                }`}
+                              >
+                                {order.isPaid ? "✓ Paid" : "Pending Payment"}
                               </span>
                             )}
                           </div>
@@ -245,13 +260,20 @@ export default function Profile() {
                         <div className="space-y-4">
                           {order.orderItems.map((item, index) => (
                             <div key={index} className="flex gap-4 items-center p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="w-20 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
-                              />
+                              <Link to={`/product/${item.product}`}>
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-20 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700 hover:opacity-75 transition-opacity cursor-pointer"
+                                />
+                              </Link>
                               <div className="flex-1 min-w-0">
-                                <p className="font-semibold mb-1 truncate">{item.name}</p>
+                                <Link 
+                                  to={`/product/${item.product}`}
+                                  className="font-semibold mb-1 truncate hover:underline block"
+                                >
+                                  {item.name}
+                                </Link>
                                 <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                                   <span>Size: {item.size}</span>
                                   <span>•</span>
@@ -288,20 +310,91 @@ export default function Profile() {
 
           {/* Wishlist Tab */}
           {activeTab === "wishlist" && (
-            <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg p-12 text-center">
-              <div className="max-w-md mx-auto">
-                <svg className="w-24 h-24 mx-auto mb-6 text-gray-300 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <h3 className="text-2xl font-bold mb-2">Your Wishlist</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">View and manage your saved items</p>
-                <Link
-                  to="/wishlist"
-                  className="inline-block px-8 py-3 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity font-medium"
-                >
-                  Go to Wishlist
-                </Link>
-              </div>
+            <div>
+              {wishlistLoading ? (
+                <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg p-12">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white mb-4"></div>
+                    <p className="text-xl text-gray-600 dark:text-gray-400">Loading your wishlist...</p>
+                  </div>
+                </div>
+              ) : wishlist.length === 0 ? (
+                <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg p-12 text-center">
+                  <div className="max-w-md mx-auto">
+                    <svg className="w-24 h-24 mx-auto mb-6 text-gray-300 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    <h3 className="text-2xl font-bold mb-2">Your wishlist is empty</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">Start adding products you love!</p>
+                    <Link
+                      to="/products"
+                      className="inline-block px-8 py-3 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity font-medium"
+                    >
+                      Browse Products
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                    {wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} in your wishlist
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {wishlist.map((product) => {
+                      const availableSize = product.sizes.find((s) => s.stock > 0);
+                      return (
+                        <div
+                          key={product._id}
+                          className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all group"
+                        >
+                          <Link
+                            to={`/product/${product._id}`}
+                            className="block no-underline text-inherit"
+                          >
+                            <div className="relative w-full h-64 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                              {product.rating > 0 && (
+                                <div className="absolute top-3 right-3 bg-white dark:bg-black px-2 py-1 rounded-lg shadow-md flex items-center gap-1 text-sm font-semibold">
+                                  <span className="text-yellow-400">★</span>
+                                  <span>{product.rating.toFixed(1)}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-4">
+                              <p className="text-xs text-gray-500 dark:text-gray-500 uppercase tracking-wide mb-1">
+                                {product.brand}
+                              </p>
+                              <h3 className="text-lg font-bold mb-2 line-clamp-2 min-h-[3.5rem]">
+                                {product.name}
+                              </h3>
+                              <p className="text-2xl font-bold">₹{product.price.toLocaleString('en-IN')}</p>
+                            </div>
+                          </Link>
+                          <div className="px-4 pb-4 flex gap-2">
+                            <button
+                              onClick={() => removeFromWishlist(product._id)}
+                              className="flex-1 px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 rounded-lg hover:border-red-500 hover:text-red-500 dark:hover:border-red-500 dark:hover:text-red-500 transition-all font-medium"
+                            >
+                              Remove
+                            </button>
+                            <button
+                              onClick={() => handleMoveToCart(product)}
+                              disabled={!availableSize}
+                              className="flex-1 px-4 py-2.5 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg"
+                            >
+                              Add to Cart
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

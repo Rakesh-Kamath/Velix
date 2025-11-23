@@ -1,6 +1,7 @@
 import Review from "../models/Review.js";
 import Product from "../models/Product.js";
 import Order from "../models/Order.js";
+import mongoose from "mongoose";
 
 // @desc    Create a review
 // @route   POST /api/reviews
@@ -8,18 +9,30 @@ import Order from "../models/Order.js";
 export const createReview = async (req, res) => {
   try {
     const { productId, rating, comment, sizePurchased, trueToSize } = req.body;
-    const userId = req.user._id;
+    // req.user comes from JWT token which has 'id' property, not '_id'
+    const userId = req.user.id || req.user._id;
+
+    console.log('Creating review:', { productId, rating, userId, user: req.user });
+
+    // Validate product exists
+    const product = await Product.findById(productId);
+    if (!product) {
+      console.log('Product not found:', productId);
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
 
     // Check if user has purchased this product
     const order = await Order.findOne({
       user: userId,
-      "orderItems.product": productId,
-      isPaid: true,
+      'orderItems.product': productId
     });
 
     if (!order) {
+      console.log('User has not purchased this product');
       return res.status(400).json({
-        message: "You can only review products you have purchased",
+        message: "You can only review products you have purchased. Please ensure you have completed an order containing this product.",
       });
     }
 
@@ -30,6 +43,7 @@ export const createReview = async (req, res) => {
     });
 
     if (existingReview) {
+      console.log('Review already exists');
       return res.status(400).json({
         message: "You have already reviewed this product",
       });
@@ -45,9 +59,9 @@ export const createReview = async (req, res) => {
     });
 
     const createdReview = await review.save();
+    console.log('Review created successfully:', createdReview._id);
 
     // Update product rating
-    const product = await Product.findById(productId);
     const reviews = await Review.find({ product: productId });
     const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
     product.rating = totalRating / reviews.length;
@@ -59,6 +73,7 @@ export const createReview = async (req, res) => {
 
     res.status(201).json(createdReview);
   } catch (error) {
+    console.error('Review creation error:', error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -108,7 +123,7 @@ export const getProductReviews = async (req, res) => {
 export const markReviewHelpful = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
-    const userId = req.user._id;
+    const userId = req.user.id || req.user._id;
 
     if (!review) {
       return res.status(404).json({ message: "Review not found" });
@@ -146,7 +161,8 @@ export const updateReview = async (req, res) => {
       return res.status(404).json({ message: "Review not found" });
     }
 
-    if (review.user.toString() !== req.user._id.toString()) {
+    const userId = req.user.id || req.user._id;
+    if (review.user.toString() !== userId.toString()) {
       return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -183,7 +199,8 @@ export const deleteReview = async (req, res) => {
       return res.status(404).json({ message: "Review not found" });
     }
 
-    if (review.user.toString() !== req.user._id.toString()) {
+    const userId = req.user.id || req.user._id;
+    if (review.user.toString() !== userId.toString()) {
       return res.status(403).json({ message: "Not authorized" });
     }
 

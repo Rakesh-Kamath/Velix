@@ -14,8 +14,7 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
     return (
       <div className="border border-gray-300 dark:border-gray-700 rounded-lg p-6 mb-8">
         <p className="text-gray-600 dark:text-gray-400">
-          Please login to leave a review. You can only review products you have
-          purchased.
+          Please login to leave a review. You can only review products you have purchased.
         </p>
       </div>
     );

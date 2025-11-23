@@ -15,85 +15,168 @@ export default function AboutUs() {
         <section>
           <h2 className="text-2xl font-semibold mb-4">Our Story</h2>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-            Founded in 2020, Velix has become India's premier destination for authentic sneakers and street fashion accessories. 
-            What started as a passion project by sneaker enthusiasts has grown into a trusted platform serving thousands of customers 
-            across the country.
+            Velix is a full-stack e-commerce platform developed as a collaborative project by three passionate 3rd year 
+            Cyber Security students. This project represents our journey into modern web development, combining our knowledge 
+            of security principles with cutting-edge web technologies.
           </p>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-            We believe that everyone deserves access to genuine, high-quality footwear and accessories. Our mission is to bring 
-            the latest releases and timeless classics directly to your doorstep, ensuring authenticity and quality with every purchase.
+            Built from the ground up, Velix showcases a complete e-commerce solution featuring user authentication, product 
+            management, shopping cart functionality, order processing, payment integration, and an intuitive admin dashboard. 
+            Our focus was not just on functionality, but also on creating a secure, scalable, and user-friendly platform that 
+            demonstrates best practices in full-stack development.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">Why Choose Velix?</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-3">100% Authentic</h3>
-              <p className="text-gray-700 dark:text-gray-300">
-                Every product sold on Velix is guaranteed authentic. We source directly from authorized distributors and brands.
+          <h2 className="text-2xl font-semibold mb-6">Meet the Developers</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="w-20 h-20 bg-black dark:bg-white rounded-full mx-auto mb-4 flex items-center justify-center text-white dark:text-black text-2xl font-bold">
+                RK
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Rakesh Kamath</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">3rd Year Cyber Security Student</p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">
+                Full-stack developer specializing in backend architecture and database design.
               </p>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-3">Curated Selection</h3>
-              <p className="text-gray-700 dark:text-gray-300">
-                Our team handpicks every item to ensure we offer only the best products from top brands worldwide.
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="w-20 h-20 bg-black dark:bg-white rounded-full mx-auto mb-4 flex items-center justify-center text-white dark:text-black text-2xl font-bold">
+                PR
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Prajwal S Rao</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">3rd Year Cyber Security Student</p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">
+                Full-stack developer focused on frontend development and user experience design.
               </p>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-3">Fast Delivery</h3>
-              <p className="text-gray-700 dark:text-gray-300">
-                With warehouses across India, we ensure quick and reliable delivery to your location.
-              </p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-3">Customer First</h3>
-              <p className="text-gray-700 dark:text-gray-300">
-                Our dedicated support team is always ready to help you with any questions or concerns.
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg text-center">
+              <div className="w-20 h-20 bg-black dark:bg-white rounded-full mx-auto mb-4 flex items-center justify-center text-white dark:text-black text-2xl font-bold">
+                AB
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Aditya Bhat K</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">3rd Year Cyber Security Student</p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">
+                Full-stack developer with expertise in API integration and security implementation.
               </p>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">Our Values</h2>
-          <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-            <li className="flex items-start">
-              <span className="text-2xl mr-3">🎯</span>
-              <div>
-                <strong>Authenticity:</strong> We never compromise on product authenticity and quality.
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-2xl mr-3">🤝</span>
-              <div>
-                <strong>Trust:</strong> Building long-term relationships with our customers through transparency.
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-2xl mr-3">🚀</span>
-              <div>
-                <strong>Innovation:</strong> Constantly improving our platform to provide the best shopping experience.
-              </div>
-            </li>
-            <li className="flex items-start">
-              <span className="text-2xl mr-3">🌍</span>
-              <div>
-                <strong>Community:</strong> Supporting sneaker culture and fashion communities across India.
-              </div>
-            </li>
-          </ul>
+          <h2 className="text-2xl font-semibold mb-4">Project Overview</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h3 className="text-xl font-semibold mb-4 pb-2 border-b border-gray-300 dark:border-gray-700">Technology Stack</h3>
+              <ul className="text-gray-700 dark:text-gray-300 space-y-2.5 text-sm">
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span><strong>Frontend:</strong> React.js, Tailwind CSS, React Router</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span><strong>Backend:</strong> Node.js, Express.js</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span><strong>Database:</strong> MongoDB with Mongoose</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span><strong>Authentication:</strong> JWT, bcrypt</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span><strong>Payment:</strong> Razorpay Integration</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span><strong>AI Features:</strong> Google Generative AI (Chatbot)</span>
+                </li>
+              </ul>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h3 className="text-xl font-semibold mb-4 pb-2 border-b border-gray-300 dark:border-gray-700">Key Features</h3>
+              <ul className="text-gray-700 dark:text-gray-300 space-y-2.5 text-sm">
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>User Authentication & Authorization</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>Product Catalog with Search & Filters</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>Shopping Cart & Wishlist</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>Order Management System</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>Payment Gateway Integration</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>Admin Dashboard</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>AI-Powered Chatbot</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-black dark:bg-white rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  <span>Product Reviews & Ratings</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Our Approach</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Security First</h3>
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                As Cyber Security students, we've implemented robust security measures including input validation, 
+                authentication, authorization, and secure payment processing.
+              </p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Modern Development</h3>
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                Built using industry-standard technologies and best practices for scalable and maintainable code.
+              </p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">User Experience</h3>
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                Focused on creating an intuitive, responsive, and visually appealing interface that works 
+                seamlessly across all devices.
+              </p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Collaboration</h3>
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                This project was a true team effort, with each member contributing their unique skills and 
+                perspectives to create a cohesive final product.
+              </p>
+            </div>
+          </div>
         </section>
 
         <section className="bg-gray-50 dark:bg-gray-900 p-8 rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Join Our Journey</h2>
+          <h2 className="text-2xl font-semibold mb-4">Learning & Growth</h2>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-            Whether you're a sneaker collector, fashion enthusiast, or someone looking for quality footwear, 
-            Velix is your trusted partner. We're committed to growing with our community and bringing you the 
-            best products, exclusive releases, and exceptional service.
+            This project has been an incredible learning experience for all three of us. From designing the database schema to 
+            implementing complex features like payment processing and AI integration, we've gained hands-on experience in full-stack 
+            development while applying our cybersecurity knowledge to ensure the platform is secure and reliable.
           </p>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-            Thank you for choosing Velix. Let's step into the future together.
+            We're proud of what we've built and excited to continue learning and improving. Thank you for exploring Velix!
           </p>
         </section>
       </div>
